@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>蓬勃·启示录训练</title>
+<style>
+/* ============ 主题变量 ============ */
+:root{
+  --bg:#f3f4f6; --surface:#ffffff; --surface2:#f8fafc; --text:#111827; --muted:#6b7280;
+  --border:#e5e7eb; --primary:#2563eb; --ok:#15803d; --bad:#dc2626; --purple:#7c3aed;
+  --ok-bg:#ecfdf5; --bad-bg:#fef2f2; --note-bg:#f5f3ff; --mark:#fef3c7;
+  --shadow:0 1px 2px rgba(0,0,0,.06),0 6px 18px rgba(0,0,0,.05);
+  --radius:14px;
+}
+:root[data-theme="dark"]{
+  --bg:#0b1220; --surface:#162033; --surface2:#1e2a40; --text:#e5e7eb; --muted:#9ca3af;
+  --border:#2b3a55; --primary:#60a5fa; --ok:#4ade80; --bad:#f87171; --purple:#c4b5fd;
+  --ok-bg:#12301f; --bad-bg:#3a1a1d; --note-bg:#241f3d; --mark:#4a3b10;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);line-height:1.6;font-size:16px;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Segoe UI",Roboto,sans-serif;
+}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* ============ 顶栏 / 页脚 ============ */
+.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);
+  padding-top:env(safe-area-inset-top)}
+.topbar-inner{max-width:960px;margin:0 auto;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{background:none;border:0;padding:6px 0;cursor:pointer;font-size:1.15rem;font-weight:700;color:var(--primary)}
+.brand span{font-weight:500;color:var(--text)}
+.top-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:1.1rem;line-height:1}
+footer{margin-top:auto;padding:18px 14px calc(18px + env(safe-area-inset-bottom));text-align:center;color:var(--muted);font-size:.85rem}
+
+/* ============ 布局 ============ */
+main{width:100%;flex:1}
+.container{width:100%;max-width:880px;margin:0 auto;padding:16px 14px 24px}
+.container.narrow{max-width:760px}
+.container.wide{max-width:960px}
+.page-title{font-size:1.5rem;font-weight:800;text-align:center;margin:6px 0 18px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+.card h2{font-size:1.1rem;margin:0 0 6px}
+.card .desc{margin:0 0 14px;color:var(--muted);font-size:.95rem}
+.card.type-card{display:flex;flex-direction:column;margin-bottom:0}
+.card.type-card .btn{margin-top:auto}
+.stat{font-size:.85rem;color:var(--muted);margin:-6px 0 12px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.label{display:block;font-size:.9rem;color:var(--muted);margin:12px 0 6px}
+.label:first-child{margin-top:0}
+
+/* ============ 按钮 / 表单 ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 18px;border:1px solid transparent;
+  border-radius:10px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer;text-align:center;
+  transition:filter .15s,transform .05s;user-select:none}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-green{background:#16a34a}.btn-purple{background:#7c3aed}.btn-red{background:#dc2626}
+.btn-gray{background:var(--surface2);color:var(--text);border-color:var(--border)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border)}
+.btn-sm{min-height:36px;padding:0 12px;font-size:.9rem;border-radius:8px}
+.btn-block{width:100%}
+@media (hover:hover){.btn:not(:disabled):hover{filter:brightness(1.1)}}
+.back{margin-bottom:10px}
+
+.seg{display:flex;gap:8px}
+.seg-btn{flex:1;min-height:48px;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface2);
+  cursor:pointer;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.25}
+.seg-btn small{font-weight:400;color:var(--muted);font-size:.78rem}
+.seg-btn.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.seg-btn.on small{color:rgba(255,255,255,.85)}
+.seg-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.input,.select,.textarea{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;
+  background:var(--surface);font-size:16px}
+.textarea{resize:vertical;line-height:1.7}
+.input:focus,.select:focus,.textarea:focus,.blank:focus{outline:2px solid var(--primary);outline-offset:1px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ============ 测试页 ============ */
+.quiz-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--surface2);border:1px solid var(--border);font-size:.82rem;color:var(--muted)}
+.vtag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--primary);color:#fff;font-size:.82rem;font-weight:600}
+:root[data-theme="dark"] .vtag{color:#0b1220}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:.92rem;color:var(--muted)}
+.progress{height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;margin-bottom:16px}
+.progress i{display:block;height:100%;background:var(--primary);border-radius:99px;transition:width .25s}
+.prompt{margin:0 0 10px;font-weight:600}
+.qtext{font-size:1.1rem;line-height:2.1;white-space:pre-wrap;word-break:break-word}
+.qtext.plain{line-height:1.8}
+.blank{font:inherit;text-align:center;border:0;border-bottom:2px solid var(--primary);background:var(--surface2);
+  border-radius:6px 6px 0 0;padding:1px 4px;min-height:1.9em;margin:0 3px;max-width:100%;vertical-align:baseline}
+.blank.ok{border-color:#16a34a;background:var(--ok-bg)}
+.blank.bad{border-color:var(--bad);background:var(--bad-bg)}
+.panel{margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--surface2);border:1px solid var(--border)}
+.panel h4{margin:0 0 6px;font-size:.82rem;color:var(--muted);font-weight:600}
+.panel.ref{border-left:4px solid var(--purple);background:var(--note-bg)}
+.panel .txt{white-space:pre-wrap;word-break:break-word;line-height:1.8}
+.fb{padding:0 3px;border-radius:4px;font-weight:600}
+.fb.ok{background:var(--ok-bg);color:var(--ok)}
+.fb.bad{background:var(--bad-bg);color:var(--bad)}
+.fb s{opacity:.7;font-weight:400;margin-right:4px}
+.hint-pre{font-weight:700;color:var(--primary)}
+.score-line{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-weight:600}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.actions .btn{flex:1 1 0;min-width:96px}
+.actions .wide{flex-basis:100%}
+.actions.sticky{position:sticky;bottom:0;z-index:10;padding:10px 0 calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(to bottom,transparent,var(--bg) 28%)}
+
+/* ============ 结果页 ============ */
+.result-head{text-align:center;margin-bottom:12px}
+.result-head h2{margin:0 0 4px;font-size:1.4rem}
+.scorebox{display:flex;justify-content:center;gap:28px;padding:12px;margin:12px 0;background:var(--surface2);border:1px solid var(--border);border-radius:12px}
+.scorebox b{display:block;font-size:1.5rem}
+.good{color:var(--ok)}.poor{color:var(--bad)}
+.item{padding:14px 0;border-top:1px solid var(--border)}
+.item:first-of-type{border-top:0}
+.item .item-title{font-size:.85rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+
+/* ============ 编辑器 ============ */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.toolbar .input{flex:1 1 200px}
+.row{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:12px 0;border-top:1px solid var(--border)}
+.row:first-of-type{border-top:0}
+.row-main{min-width:0;flex:1}
+.row-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px;font-size:.82rem;color:var(--muted)}
+.row-q{margin:0;word-break:break-word}
+.row-a{margin:4px 0 0;color:var(--muted);font-size:.92rem;word-break:break-word}
+.row-actions{display:flex;gap:6px;flex-shrink:0}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
+.pager{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:12px}
+.preview{margin-top:8px;font-size:.88rem;color:var(--muted)}
+.preview b{color:var(--text)}
+.empty{text-align:center;color:var(--muted);padding:26px 0}
+
+/* ============ 首页：题库管理说明条 / 密码弹窗 ============ */
+.admin-box{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:30px;padding:14px 16px;
+  border:1px dashed var(--border);border-radius:var(--radius);color:var(--muted)}
+.admin-box strong{color:var(--text);font-size:.95rem}
+.admin-box p{margin:2px 0 0;font-size:.85rem;line-height:1.5}
+.admin-box .btn{flex-shrink:0}
+.lock{font-size:.8em;opacity:.75;margin-left:4px}
+.modal{position:fixed;inset:0;z-index:60;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.modal-box h3{margin:0 0 4px;font-size:1.1rem}
+.modal-box .err{min-height:1.4em;margin:6px 0 0;color:var(--bad);font-size:.88rem}
+.modal-box .actions{margin-top:10px}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.shake{animation:shake .3s}
+@media (max-width:860px){.grid-3{grid-template-columns:1fr}}
+@media (max-width:720px){.admin-box{flex-direction:column;align-items:stretch;text-align:left}}
+
+/* ============ Toast ============ */
+#toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,16px);z-index:99;
+  max-width:min(92vw,560px);padding:10px 16px;border-radius:10px;background:#111827;color:#fff;font-size:.92rem;opacity:0;
+  pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast[data-type="error"]{background:#b91c1c}
+#toast[data-type="success"]{background:#15803d}
+
+/* ============ 动画（仅轻微淡入） ============ */
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#app:not(.still)>*{animation:fade .22s ease}
+@media (prefers-reduced-motion:reduce){#app>*{animation:none!important}.progress i{transition:none}}
+
+/* ============ 手机适配 ============ */
+@media (max-width:720px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .card{padding:15px}
+  .row{flex-direction:column}
+  .row-actions{width:100%}
+  .row-actions .btn{flex:1}
+  .qtext{font-size:1.05rem}
+  .scorebox{gap:18px}
+}
+@media (max-width:420px){
+  .two-col{grid-template-columns:1fr}
+  .brand{font-size:1.02rem}
+}
+
+/* ============ 打印 / 另存为 PDF：只保留结果区 ============ */
+@media print{
+  .topbar,footer,.back,.result-actions,#toast{display:none!important}
+  body{background:#fff;color:#000}
+  .container{max-width:none;padding:0}
+  .card{box-shadow:none;border:0;padding:0}
+  .item{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="brand" id="brandBtn" type="button">蓬勃 <span>· 启示录训练</span></button>
+    <div class="top-actions">
+      <button class="btn btn-ghost btn-sm" id="homeBtn" type="button" hidden>首页</button>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="切换深色/浅色">🌙</button>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>我听见以色列人各支派中受印的数目有十四万四千...</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="pwModal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
+    <h3 id="pwTitle">请输入密码</h3>
+    <p class="muted small" style="margin:0 0 10px" id="pwHint"></p>
+    <input class="input" id="pwInput" type="password" autocomplete="off" autocapitalize="off" placeholder="密码" enterkeyhint="done">
+    <p class="err" id="pwErr" role="alert"></p>
+    <div class="actions">
+      <button class="btn btn-gray" id="pwCancel" type="button">取消</button>
+      <button class="btn" id="pwOk" type="button">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 内置题库（生成离线单文件时会被替换为最新数据） -->
+<script id="__BANK_OVERRIDE__" type="application/json">{"_version":2,"_updated":"2026-11-10T23:07:31.000Z","fillEasy":[{"id":1,"chapter":1,"verse":"启1:1","question":"（耶稣基督）的启示，就是神赐给他，叫他将（必要快成）的事指示他的众仆人。他就差遣使者，晓谕他的仆人（约翰）。","answers":["耶稣基督","必要快成","约翰"]},{"id":2,"chapter":1,"verse":"启1:3","question":"念这书上（预言）的，和那些（听见）又（遵守）其中所记载的，都是有福的。因为日期近了。","answers":["预言","听见","遵守"]},{"id":3,"chapter":1,"verse":"启1:7","question":"看哪，他（驾云降临）。众目要看见他，连（刺他的人）也要看见他。地上的万族都要因他（哀哭）。这话是真实的。阿们。","answers":["驾云降临","刺他的人","哀哭"]},{"id":4,"chapter":1,"verse":"启1:8","question":"主神说，我是（阿拉法），我是（俄梅戛），是（昔在今在以后永在）的全能者。","answers":["阿拉法","俄梅戛","昔在今在以后永在"]},{"id":5,"chapter":1,"verse":"启1:16","question":"他（右手）拿着（七星）。从他口中出来一把（两刃的利剑）。面貌如同（烈日放光）。","answers":["右手","七星","两刃的利剑","烈日放光"]},{"id":6,"chapter":1,"verse":"启1:17-18","question":"我一看见，就仆倒在他脚前，像死了一样。他用右手按着我说，不要（惧怕）。我是首先的，我是末后的，又是那（存活）的。我曾（死过），现在又（活了），直活到永永远远。并且拿着死亡和阴间的钥匙。","answers":["惧怕","存活","死过","活了"]},{"id":7,"chapter":2,"verse":"启2:7","question":"圣灵向（众教会）所说的话，凡有耳的，就应当（听）。得胜的，我必将神（乐园）中（生命树）的果子赐给他（吃）。","answers":["众教会","听","乐园","生命树","吃"]},{"id":8,"chapter":2,"verse":"启2:10","question":"你将要受的苦你不用怕。魔鬼要把你们中间几个人下在（监里），叫你们被（试炼）。你们必受患难（十日）。你务要至死（忠心），我就赐给你那生命的冠冕。","answers":["监里","试炼","十日","忠心"]},{"id":9,"chapter":2,"verse":"启2:11","question":"圣灵向众教会所说的话，凡有耳的，就应当听。得胜的，必不受（第二次死）的害。","answers":["第二次死"]},{"id":10,"chapter":2,"verse":"启2:17","question":"圣灵向众教会所说的话，凡有耳的就应当听。得胜的，我必将那（隐藏的吗哪）赐给他。并赐他一块（白石），石上写着（新名）。除了那领受的以外。没有人能认识。","answers":["隐藏的吗哪","白石","新名"]},{"id":11,"chapter":3,"verse":"启3:5","question":"凡得胜的，必这样穿（白衣）。我也必不从（生命册）上涂抹他的名。且要在我（父）面前，和我父众使者面前认他的名。","answers":["白衣","生命册","父"]},{"id":12,"chapter":3,"verse":"启3:8","question":"我知道你的行为，你略有（一点力量），也曾（遵守）我的道，没有（弃绝）我的名。看哪，我在你面前给你一个（敞开的门），是无人能关的。","answers":["一点力量","遵守","弃绝","敞开的门"]},{"id":13,"chapter":3,"verse":"启3:11","question":"我必（快来），你要（持守）你所有的，免得人（夺去）你的冠冕。","answers":["快来","持守","夺去"]},{"id":14,"chapter":3,"verse":"启3:20","question":"看哪，我站在（门外）叩门。若有听见我声音就（开门）的，我要（进到）他那里去，我与他，他与我一同（坐席）。","answers":["门外","开门","进到","坐席"]},{"id":15,"chapter":3,"verse":"启3:21","question":"得胜的，我要赐他在我（宝座）上与我同坐，就如我得了胜，在我（父）的宝座上与他同坐一般。","answers":["宝座","父"]},{"id":16,"chapter":4,"verse":"启4:1","question":"此后，我观看，见（天上）有门开了，我初次听见好像（吹号）的声音，对我说，你上到这里来，我要将（以后必成）的事指示你。","answers":["天上","吹号","以后必成"]},{"id":17,"chapter":4,"verse":"启4:4","question":"宝座的周围，又有（二十四）个座位，其上坐着（二十四）位长老，身穿（白衣），头上戴着（金冠冕）。","answers":["二十四","二十四","白衣","金冠冕"]},{"id":18,"chapter":4,"verse":"启4:8","question":"四活物各有（六个翅膀），遍体内外都满了（眼睛）。他们昼夜不住地说，（圣哉），圣哉，圣哉，主神。是昔在今在以后永在的（全能者）。","answers":["六个翅膀","眼睛","圣哉","全能者"]},{"id":19,"chapter":5,"verse":"启5:5","question":"长老中有一位对我说，不要哭。看哪，（犹大）支派中的（狮子），大卫的根，他已得胜，能以展开那书卷，揭开那（七印）。","answers":["犹大","狮子","七印"]},{"id":20,"chapter":5,"verse":"启5:9","question":"他们唱（新歌），说，你配拿书卷，配揭开七印。因为你曾被杀，用自己的（血）从各族各方，各民各国中买了人来，叫他们归于（神）。","answers":["新歌","血","神"]},{"id":21,"chapter":6,"verse":"启6:8","question":"我就观看，见有一匹（灰色马）。骑在马上的，名字叫作（死）。阴府也随着他。有权柄赐给他们，可以用（刀剑），饥荒，瘟疫(瘟疫或作死亡)，野兽，杀害地上四分之一的人。","answers":["灰色马","死","刀剑"]},{"id":22,"chapter":7,"verse":"启7:9","question":"此后，我观看，见有许多的人，没有人能数过来，是从各（国）各（族）各（民）各方来的，站在宝座和羔羊面前，身穿（白衣），手拿（棕树枝）。","answers":["国","族","民","白衣","棕树枝"]},{"id":23,"chapter":7,"verse":"启7:14","question":"我对他说，我主，你知道。他向我说，这些人是从（大患难）中出来的，曾用（羔羊的血），把衣裳（洗白净了）。","answers":["大患难","羔羊的血","洗白净了"]},{"id":24,"chapter":7,"verse":"启7:17","question":"因为宝座中的（羔羊）必牧养他们，领他们到（生命水）的泉源。神也必擦去他们一切的（眼泪）。","answers":["羔羊","生命水","眼泪"]},{"id":25,"chapter":12,"verse":"启12:11","question":"弟兄胜过它，是因（羔羊的血），和自己所（见证的道）。他们虽至于死，也不（爱惜性命）。","answers":["羔羊的血","见证的道","爱惜性命"]},{"id":26,"chapter":13,"verse":"启13:8","question":"凡住在地上，名字从（创世以来），没有记在被杀之（羔羊）生命册上的人，都要（拜它）。","answers":["创世以来","羔羊","拜它"]},{"id":27,"chapter":14,"verse":"启14:13","question":"我听见从天上有声音说，你要写下，从今以后，在（主里面）而死的人有（福）了。圣灵说，是的，他们（息了自己的劳苦），作工的果效也（随着他们）。","answers":["主里面","福","息了自己的劳苦","随着他们"]},{"id":28,"chapter":19,"verse":"启19:7","question":"我们要（欢喜快乐），将荣耀归给他。因为（羔羊）婚娶的时候到了，新妇也自己（预备好了）。","answers":["欢喜快乐","羔羊","预备好了"]},{"id":29,"chapter":20,"verse":"启20:12","question":"我又看见死了的人，无论大小，都站在宝座前。案卷展开了。并且另有一卷展开，就是（生命册）。死了的人都凭着这些案卷所记载的，照他们所行的受（审判）。","answers":["生命册","审判"]},{"id":30,"chapter":21,"verse":"启21:4","question":"神要擦去他们一切的眼泪。不再有（死亡），也不再有（悲哀），哭号，疼痛，因为（以前的事）都（过去了）。","answers":["死亡","悲哀","以前的事","过去了"]},{"id":31,"chapter":21,"verse":"启21:6","question":"他又对我说，都成了。我是（阿拉法），我是（俄梅戛），我是（初），我是（终）。我要将生命泉的水白白赐给那口渴的人喝。","answers":["阿拉法","俄梅戛","初","终"]},{"id":32,"chapter":22,"verse":"启22:17","question":"（圣灵）和（新妇）都说来。听见的人也该说（来）。口渴的人也当来。（愿意）的都可以白白取生命的水喝。","answers":["圣灵","新妇","来","愿意"]},{"id":33,"chapter":22,"verse":"启22:20","question":"证明这事的说，是了。我必（快来）。阿们。主耶稣阿，我愿你（来）。","answers":["快来","来"]},{"id":34,"chapter":1,"verse":"启1:10","question":"当（主日）我被（圣灵感动），听见在我后面有（大声音）如吹号说。","answers":["主日","圣灵感动","大声音"]},{"id":35,"chapter":2,"verse":"启2:1","question":"你要写信给（以弗所）教会的使者，说，那右手拿着（七星），在（七个金灯台）中间行走的，说。","answers":["以弗所","七星","七个金灯台"]},{"id":36,"chapter":19,"verse":"启19:1","question":"此后，我听见（群众的大声音）在天上大声说：“哈利路亚(就是“要赞美耶和华”的意思)！救恩、荣耀、权能都属乎我们的 神。","answers":["群众的大声音"]},{"id":37,"chapter":19,"verse":"启19:2","question":"他的判断是（真实公义）的，因他判断了那用淫行败坏世界的大淫妇，并且向淫妇讨流仆人血的罪，给他们伸冤。”","answers":["真实公义"]},{"id":38,"chapter":19,"verse":"启19:3","question":"又说：“哈利路亚！（烧淫妇的烟）往上冒，直到永永远远。”","answers":["烧淫妇的烟"]},{"id":39,"chapter":19,"verse":"启19:5","question":"有声音从宝座出来说：“ 神的众仆人哪，凡（敬畏）他的，无论大小，都要赞美我们的 神。”","answers":["敬畏"]},{"id":40,"chapter":19,"verse":"启19:6","question":"我听见好像群众的声音，众水的声音，大雷的声音，说：“哈利路亚！因为主我们的 神，全能者（作王了）。”","answers":["作王了"]},{"id":41,"chapter":19,"verse":"启19:7","question":"我们要欢喜快乐，将荣耀归给他。因为（羔羊婚娶）的时候到了，新妇也自己预备好了，","answers":["羔羊婚娶"]},{"id":42,"chapter":19,"verse":"启19:8","question":"就蒙恩得穿光明洁白的细麻衣。这细麻衣就是（圣徒所行的义）。","answers":["圣徒所行的义"]},{"id":43,"chapter":19,"verse":"启19:9","question":"天使吩咐我说：“你要写上，凡被请赴（羔羊之婚宴的）有福了！”又对我说：“这是 神真实的话。”","answers":["羔羊之婚宴的"]},{"id":44,"chapter":19,"verse":"启19:10","question":"我就俯伏在他脚前要拜他，他说：“千万不可！我和你，并你那些为耶稣作见证的弟兄同是作仆人的，你要敬拜 神。”因为（预言中的灵）乃是为耶稣作见证。","answers":["预言中的灵"]},{"id":45,"chapter":19,"verse":"启19:12","question":"他的眼睛如火焰，他头上戴着（许多冠冕），又有写着的名字，除了他自己没有人知道。","answers":["许多冠冕"]},{"id":46,"chapter":19,"verse":"启19:13","question":"他穿着（溅了血）的衣服，他的名称为神之道。","answers":["溅了血"]},{"id":47,"chapter":19,"verse":"启19:14","question":"在天上的众军骑着白马，穿着（细麻衣），又白又洁，跟随他。","answers":["细麻衣"]},{"id":48,"chapter":19,"verse":"启19:15","question":"有（利剑）从他口中出来，可以击杀列国。他必用铁杖辖管(“辖管”原文作“牧”)他们，并要踹全能 神烈怒的酒榨。","answers":["利剑"]},{"id":49,"chapter":19,"verse":"启19:16","question":"在他衣服和大腿上有名写着说：“（万王之王，万主之主）。”","answers":["万王之王，万主之主"]},{"id":50,"chapter":19,"verse":"启19:17","question":"我又看见一位天使站在日头中，向天空（飞的鸟）大声喊着说：“你们聚集来赴神的大筵席，","answers":["飞的鸟"]},{"id":51,"chapter":19,"verse":"启19:18","question":"可以吃（君王的肉），壮士与马和骑马者的肉，并一切自主的为奴的，以及大小人民的肉。”","answers":["君王的肉"]},{"id":52,"chapter":19,"verse":"启19:20","question":"那兽被擒拿，那在兽面前曾行奇事、迷惑受兽印记和拜兽像之人的假先知，也与兽同被擒拿。他们两个就活活地被扔在（烧着硫磺的火湖里）；","answers":["烧着硫磺的火湖里"]},{"id":53,"chapter":19,"verse":"启19:21","question":"其余的被骑白马者口中出来的剑杀了。飞鸟都吃饱了（他们的肉）。","answers":["他们的肉"]},{"id":54,"chapter":8,"verse":"启8:8","question":"第二位天使吹号，就有仿佛（火烧着的大山）扔在海中；（海的三分之一）变成（血）","answers":["火烧着的大山","海的三分之一","血"]},{"id":55,"chapter":8,"verse":"启8:9","question":"海中的（活物）死了三分之一，（船只）也坏了三分之一。","answers":["活物","船只"]},{"id":56,"chapter":8,"verse":"启8:10","question":"第三位天使吹号，就有（烧着的大星），（好像火把）从天上落下来，落在（江河的三分之一和众水的泉源）上。","answers":["烧着的大星","好像火把","江河的三分之一和众水的泉源"]},{"id":57,"chapter":8,"verse":"启8:11","question":"这星名叫（“茵陈”）。（众水）的三分之一变为茵陈，因水变苦，就死了（许多人）。","answers":["“茵陈”","众水","许多人"]},{"id":58,"chapter":8,"verse":"启8:13","question":"我又看见一个（鹰）飞在空中，并听见它大声说：“三位天使要吹那其余的号。你们（住在地上的民），祸哉！祸哉！祸哉！”","answers":["鹰","住在地上的民"]}],"fillHard":[{"id":101,"chapter":1,"verse":"启1:1-2","question":"（耶稣基督）的启示，就是神赐给他，叫他将（必要快成）的事指示他的众仆人。他就差遣（使者），晓谕他的仆人（约翰）。约翰便将神的道，和耶稣基督的见证，凡自己所看见的，都（证明）出来。","answers":["耶稣基督","必要快成","使者","约翰","证明"]},{"id":102,"chapter":1,"verse":"启1:3-4","question":"（念）这书上预言的，和那些（听见）又（遵守）其中所记载的，都是有福的。因为（日期近了）。约翰写信给亚西亚的（七个教会）。但愿从那昔在今在以后永在的神和他宝座前的七灵。","answers":["念","听见","遵守","日期近了","七个教会"]},{"id":103,"chapter":1,"verse":"启1:5-6","question":"并那诚实作（见证）的，从死里（首先复活），为世上（君王元首）的耶稣基督。有恩惠平安归与你们。他（爱）我们，用自己的（血）使我们脱离罪恶。又使我们成为（国民），作他父神的（祭司）。但愿荣耀权能归给他，直到永永远远。阿们。","answers":["见证","首先复活","君王元首","爱","血","国民","祭司"]},{"id":104,"chapter":1,"verse":"启1:7-8","question":"看哪，他（驾云降临）。众目要看见他，连（刺他的人）也要看见他。地上的万族都要因他（哀哭）。这话是真实的。阿们。主神说，我是（阿拉法），我是（俄梅戛），是昔在今在以后永在的全能者。","answers":["驾云降临","刺他的人","哀哭","阿拉法","俄梅戛"]},{"id":105,"chapter":1,"verse":"启1:9-10","question":"我约翰就是你们的（弟兄），和你们在耶稣的（患难），国度，忍耐里一同有分。为神的道，并为给耶稣作的见证，曾在那名叫（拔摩）的海岛上。当（主日）我被圣灵感动，听见在我后面有大声音如吹号说，","answers":["弟兄","患难","拔摩","主日"]},{"id":106,"chapter":2,"verse":"启2:1-2","question":"你要写信给（以弗所）教会的使者，说，那右手拿着七星，在七个金灯台中间行走的，说，我知道你的（行为），劳碌，忍耐，也知道你不能容忍（恶人），你也曾试验那自称为使徒却不是使徒的，看出他们是（假）的来。","answers":["以弗所","行为","恶人","假"]},{"id":107,"chapter":2,"verse":"启2:3-5","question":"你也能（忍耐），曾为我的名（劳苦），并不乏倦。然而有一件事我要责备你，就是你把起初的（爱心）离弃了。所以应当回想你是从哪里（坠落）的，并要悔改，行起初所行的事。你若不悔改，我就临到你那里，把你的灯台从原处（挪去）。","answers":["忍耐","劳苦","爱心","坠落","挪去"]},{"id":108,"chapter":2,"verse":"启2:7","question":"圣灵向（众教会）所说的话，凡有耳的，就应当（听）。得胜的，我必将神（乐园）中（生命树）的果子赐给他（吃）。","answers":["众教会","听","乐园","生命树","吃"]},{"id":109,"chapter":2,"verse":"启2:10-11","question":"你将要受的苦你不用（怕）。魔鬼要把你们中间几个人下在（监里），叫你们被（试炼）。你们必受患难（十日）。你务要至死（忠心），我就赐给你那生命的冠冕。圣灵向众教会所说的话，凡有耳的，就应当听。得胜的，必不受（第二次死）的害。","answers":["怕","监里","试炼","十日","忠心","第二次死"]},{"id":110,"chapter":3,"verse":"启3:1-3","question":"你要写信给（撒狄）教会的使者，说，那有神的七灵和七星的，说，我知道你的行为，按名你是（活）的，其实是（死）的。你要儆醒，坚固那剩下将要衰微的。因我见你的行为，在我神面前，没有一样是（完全）的。所以要回想你是怎样（领受），怎样听见的。又要遵守，并要悔改。若不儆醒，我必临到你那里如同（贼）一样。我几时临到，你也决不能知道。","answers":["撒狄","活","死","完全","领受","贼"]},{"id":111,"chapter":3,"verse":"启3:5","question":"凡（得胜）的，必这样穿（白衣）。我也必不从（生命册）上涂抹他的名。且要在我（父）面前，和我父众使者面前认他的名。","answers":["得胜","白衣","生命册","父"]},{"id":112,"chapter":3,"verse":"启3:7-8","question":"你要写信给（非拉铁非）教会的使者，说，那（圣洁），（真实），拿着大卫的钥匙，开了就没有人能关，关了就没有人能开的，说，我知道你的行为，你略有（一点力量），也曾遵守我的道，没有弃绝我的名。看哪，我在你面前给你一个（敞开的门），是无人能关的。","answers":["非拉铁非","圣洁","真实","一点力量","敞开的门"]},{"id":113,"chapter":3,"verse":"启3:10-11","question":"你既遵守我（忍耐的道），我必在普天下人受试炼的时候，（保守）你免去你的试炼。我必（快来），你要持守你所有的，免得人（夺去）你的冠冕。","answers":["忍耐的道","保守","快来","夺去"]},{"id":114,"chapter":3,"verse":"启3:14-16","question":"你要写信给（老底嘉）教会的使者，说，那为（阿们）的，为诚信真实见证的，在神创造万物之上为元首的,说,我知道你的行为，你也不（冷）也不（热）。我巴不得你或冷或热。你既如（温水），也不冷也不热，所以我必从我口中把你吐出去。","answers":["老底嘉","阿们","冷","热","温水"]},{"id":115,"chapter":3,"verse":"启3:17-18","question":"你说，我是（富足），已经发了财，一样都不缺。却不知道你是那（困苦），可怜，（贫穷），瞎眼，赤身的。我劝你向我买（火炼的金子），叫你富足。又买（白衣）穿上，叫你赤身的羞耻不露出来。又买（眼药）擦你的眼睛，使你能看见。","answers":["富足","困苦","贫穷","火炼的金子","白衣","眼药"]},{"id":116,"chapter":3,"verse":"启3:19-20","question":"凡我所（疼爱）的，我就（责备管教）他。所以你要发（热心），也要悔改。看哪，我站在（门外）叩门。若有听见我声音就（开门）的，我要进到他那里去，我与他，他与我一同坐席。","answers":["疼爱","责备管教","热心","门外","开门"]},{"id":117,"chapter":3,"verse":"启3:21-22","question":"（得胜）的，我要赐他在我（宝座）上与我同坐，就如我得了胜，在我父的宝座上与他同坐一般。（圣灵）向众教会所说的话，凡有（耳）的，就应当听。","answers":["得胜","宝座","圣灵","耳"]},{"id":118,"chapter":4,"verse":"启4:1-2","question":"此后，我观看，见（天上）有门开了，我初次听见好像吹号的声音，对我说，你上到这里来，我要将（以后必成）的事指示你。我立刻被（圣灵）感动，见有一个（宝座）安置在天上，又有一位坐在宝座上。","answers":["天上","以后必成","圣灵","宝座"]},{"id":119,"chapter":4,"verse":"启4:4","question":"宝座的周围，又有（二十四）个座位，其上坐着（二十四）位长老，身穿（白衣），头上戴着（金冠冕）。","answers":["二十四","二十四","白衣","金冠冕"]},{"id":120,"chapter":4,"verse":"启4:8","question":"四活物各有（六个翅膀），遍体内外都满了（眼睛）。他们昼夜不住地说，（圣哉），圣哉，圣哉，主神。是昔在今在以后永在的（全能者）。","answers":["六个翅膀","眼睛","圣哉","全能者"]}],"qaEasy":[{"id":1,"chapter":8,"verse":"启8:8","question":"火烧着的大山是？","answer":"被神震怒之话语审判的背道的七个金灯台帐幕"},{"id":2,"chapter":8,"verse":"启8:8","question":"扔在海中指？","answer":"被丢弃到世上"},{"id":3,"chapter":8,"verse":"启8:8","question":"海 1/3 → 血:","answer":"(被审判的七个金灯台帐幕成为世界的所属)在那里传出的话语 1/3掺杂了灭亡者的教训成为了死的教理"},{"id":4,"chapter":8,"verse":"启8:9","question":"活物 1/3 → 死了:","answer":"七个金灯台帐幕的枝教会圣徒们听了灭亡者的教理，灵死去"},{"id":5,"chapter":8,"verse":"启8:9","question":"船只 1/3 → 坏了:","answer":"七个金灯台帐幕枝教会 1/3也成为了世界所属而倾倒"},{"id":6,"chapter":8,"verse":"启8:10","question":"从天上落下来的烧着的大星:","answer":"七个金灯台帐幕出身，与灭亡者合一结党的肉体"},{"id":7,"chapter":8,"verse":"启8:10","question":"河, 众水的泉源:","answer":"进入外邦巢穴的七个金灯台帐幕的传道者和牧者"},{"id":8,"chapter":8,"verse":"启8:11","question":"这星名叫茵陈的理由:","answer":"因为说出非真理(申 32:31-33, 耶 9:15, 耶 23:15)"},{"id":9,"chapter":8,"verse":"启8:11","question":"众水 1/3 → 变为茵陈:","answer":"背道的帐幕枝教会的传道者和牧者1/3受到了茵陈星即帐幕出身的灭亡者的迷惑，传讲撒但的教理"},{"id":10,"chapter":8,"verse":"启8:11","question":"死了的许多人是？","answer":"七个金灯台帐幕圣徒们"},{"id":11,"chapter":8,"verse":"启8:12","question":"日、月、星 是指：","answer":"- 日 : 七使者和所属其下的枝教会牧者们\n- 月 : 从牧者接受光之话语并传讲的传道者们\n- 星 : 圣徒们"},{"id":12,"chapter":8,"verse":"启8:12","question":"被击打:","answer":"七个金灯台帐幕被剥夺教权"},{"id":13,"chapter":8,"verse":"启8:12","question":"1/3黑暗了:","answer":"牧者和传道者, 圣徒 1/3不能说出真理"},{"id":14,"chapter":8,"verse":"启8:13","question":"鹰:","answer":"往来于灵界和肉界的天使长"},{"id":15,"chapter":8,"verse":"启8:13","question":"住在地上的人","answer":"违背神的言约被赶到外邦的七个金灯台帐幕圣徒们"},{"id":16,"chapter":8,"verse":"启8:13","question":"三个祸","answer":"七个中剩下的三个灾殃"}],"qaHard":[]}</script>
+
+<script>
+'use strict';
+/* =====================================================================
+ * 常量
+ * ===================================================================== */
+const TOTAL_CHAPTERS = 22;
+const GROUP_SIZE = 5;
+const PAGE_SIZE = 20;
+const STORE_KEY = 'rev_bank_v2';
+const THEME_KEY = 'theme';
+const BANK_KEYS = ['fillEasy', 'fillHard', 'qaEasy', 'qaHard'];
+const DIFF = { easy: '容易', hard: '困难' };
+const TYPES = {
+  fill: { label: '填空测试', kind: 'fill', desc: '经文中的关键词用空格代替，逐空填写，系统自动判分。' },
+  dict: { label: '默写测试', kind: null,   desc: '只给出经文开头几个字，凭记忆默写后文，可逐步加提示。' },
+  qa:   { label: '问答测试', kind: 'qa',   desc: '启示录真意问答：先写下自己的回答，再对照参考答案。' }
+};
+/* 默写用的整节经文（第1–3章）。其余章节自动取填空题库的文字 */
+const SCRIPTURE = [[1,1,"耶稣基督的启示，就是神赐给他，叫他将必要快成的事指示他的众仆人。他就差遣使者，晓谕他的仆人约翰。"],[1,2,"约翰便将神的道，和耶稣基督的见证，凡自己所看见的，都证明出来。"],[1,3,"念这书上预言的，和那些听见又遵守其中所记载的，都是有福的。因为日期近了。"],[1,4,"约翰写信给亚西亚的七个教会。但愿从那昔在今在以后永在的神和他宝座前的七灵。"],[1,5,"并那诚实作见证的，从死里首先复活，为世上君王元首的耶稣基督。有恩惠平安归与你们。他爱我们，用自己的血使我们脱离罪恶。(脱离有古卷作洗去)"],[1,6,"又使我们成为国民，作他父神的祭司。但愿荣耀权能归给他，直到永永远远。阿们。"],[1,7,"看哪，他驾云降临。众目要看见他，连刺他的人也要看见他。地上的万族都要因他哀哭。这话是真实的。阿们。"],[1,8,"主神说，我是阿拉法，我是俄梅戛(阿拉法俄梅戛乃希腊字母首末二字)，是昔在今在以后永在的全能者。"],[1,9,"我约翰就是你们的弟兄，和你们在耶稣的患难，国度，忍耐里一同有分。为神的道，并为给耶稣作的见证，曾在那名叫拔摩的海岛上。"],[1,10,"当主日我被圣灵感动，听见在我后面有大声音如吹号说，"],[1,11,"你所看见的，当写在书上，达与以弗所，士每拿，别迦摩，推雅推喇，撒狄，非拉铁非，老底嘉，那七个教会。"],[1,12,"我转过身来，要看是谁发声与我说话。既转过来，就看见七个金灯台。"],[1,13,"灯台中间，有一位好像人子，身穿长衣，直垂到脚，胸间束着金带。"],[1,14,"他的头与发皆白，如白羊毛，如雪。眼目如同火焰。"],[1,15,"脚好像在炉中锻炼光明的铜。声音如同众水的声音。"],[1,16,"他右手拿着七星。从他口中出来一把两刃的利剑。面貌如同烈日放光。"],[1,17,"我一看见，就仆倒在他脚前，像死了一样。他用右手按着我说，不要惧怕。我是首先的，我是末后的，"],[1,18,"又是那存活的。我曾死过，现在又活了，直活到永永远远。并且拿着死亡和阴间的钥匙。"],[1,19,"所以你要把所看见的，和现在的事，并将来必成的事，都写出来。"],[1,20,"论到你所看见在我右手中的七星，和七个金灯台的奥秘。那七星就是七个教会的使者。七灯台就是七个教会。"],[2,1,"你要写信给以弗所教会的使者，说，那右手拿着七星，在七个金灯台中间行走的，说，"],[2,2,"我知道你的行为，劳碌，忍耐，也知道你不能容忍恶人，你也曾试验那自称为使徒却不是使徒的，看出他们是假的来。"],[2,3,"你也能忍耐，曾为我的名劳苦，并不乏倦。"],[2,4,"然而有一件事我要责备你，就是你把起初的爱心离弃了。"],[2,5,"所以应当回想你是从哪里坠落的，并要悔改，行起初所行的事。你若不悔改，我就临到你那里，把你的灯台从原处挪去。"],[2,6,"然而你还有一件可取的事，就是你恨恶尼哥拉一党人的行为，这也是我所恨恶的。"],[2,7,"圣灵向众教会所说的话，凡有耳的，就应当听。得胜的，我必将神乐园中生命树的果子赐给他吃。"],[2,8,"你要写信给士每拿教会的使者说，那首先的，末后的，死过又活的说，"],[2,9,"我知道你的患难，你的贫穷，(你却是富足的)也知道那自称是犹太人所说的毁谤话，其实他们不是犹太人，乃是撒但一会的人。"],[2,10,"你将要受的苦你不用怕。魔鬼要把你们中间几个人下在监里，叫你们被试炼。你们必受患难十日。你务要至死忠心，我就赐给你那生命的冠冕。"],[2,11,"圣灵向众教会所说的话，凡有耳的，就应当听。得胜的，必不受第二次死的害。"],[2,12,"你要写信给别迦摩教会的使者，说，那有两刃利剑的说，"],[2,13,"我知道你的居所，就是有撒但座位之处。当我忠心的见证人安提帕在你们中间，撒但所住的地方被杀之时，你还坚守我的名，没有弃绝我的道。"],[2,14,"然而有几件事我要责备你，因为在你那里，有人服从了巴兰的教训。这巴兰曾教导巴勒将绊脚石放在以色列人面前，叫他们吃祭偶像之物，行奸淫的事。"],[2,15,"你那里也有人照样服从了尼哥拉一党人的教训。"],[2,16,"所以你当悔改。若不悔改，我就快临到你那里，用我口中的剑，攻击他们。"],[2,17,"圣灵向众教会所说的话，凡有耳的就应当听。得胜的，我必将那隐藏的吗哪赐给他。并赐他一块白石，石上写着新名。除了那领受的以外。没有人能认识。"],[2,18,"你要写信给推雅推喇教会的使者，说，那眼目如火焰，脚像光明铜的神之子，说，"],[2,19,"我知道你的行为，爱心，信心，勤劳，忍耐。又知道你末后所行的善事，比起初所行的更多。"],[2,20,"然而有一件事我要责备你，就是你容让那自称是先知的妇人耶洗别教导我的仆人，引诱他们行奸淫，吃祭偶像之物。"],[2,21,"我曾给她悔改的机会，她却不肯悔改她的淫行。"],[2,22,"看哪，我要叫她病卧在床，那些与她行淫的人，若不悔改所行的，我也要叫他们同受大患难。"],[2,23,"我又要杀死她的党类(党类原文作儿女)，叫众教会知道，我是那察看人肺腑心肠的。并要照你们的行为报应你们各人。"],[2,24,"至于你们推雅推喇其余的人，就是一切不从那教训，不晓得他们素常所说撒但深奥之理的人。我告诉你们，我不将别的担子放在你们身上。"],[2,25,"但你们已经有的，总要持守，直等到我来。"],[2,26,"那得胜又遵守我命令到底的，我要赐给他权柄制伏列国。"],[2,27,"他必用铁杖辖管他们(辖管原文作牧)，将他们如同窑户的瓦器打得粉碎。像我从我父领受的权柄一样。"],[2,28,"我又要把晨星赐给他。"],[2,29,"圣灵向众教会所说的话，凡有耳的就应当听。"],[3,1,"你要写信给撒狄教会的使者，说，那有神的七灵和七星的，说，我知道你的行为，按名你是活的，其实是死的。"],[3,2,"你要儆醒，坚固那剩下将要衰微的(衰微原文作死)。因我见你的行为，在我神面前，没有一样是完全的。"],[3,3,"所以要回想你是怎样领受，怎样听见的。又要遵守，并要悔改。若不儆醒，我必临到你那里如同贼一样。我几时临到，你也决不能知道。"],[3,4,"然而在撒狄你还有几名是未曾污秽自己衣服的。他们要穿白衣与我同行。因为他们是配得过的。"],[3,5,"凡得胜的，必这样穿白衣。我也必不从生命册上涂抹他的名。且要在我(父)面前，和我父众使者面前认他的名。"],[3,6,"圣灵向众教会所说的话，凡有耳的，就应当听。"],[3,7,"你要写信给非拉铁非教会的使者，说，那圣洁，真实，拿着大卫的钥匙，开了就没有人能关，关了就没有人能开的，说，"],[3,8,"我知道你的行为，你略有一点力量，也曾遵守我的道，没有弃绝我的名。看哪，我在你面前给你一个敞开的门，是无人能关的。"],[3,9,"那撒但一会的，自称是犹太人，其实不是犹太人，乃是说谎话的，我要使他们来在你脚前下拜，也使他们知道我是已经爱你了。"],[3,10,"你既遵守我忍耐的道，我必在普天下人受试炼的时候，保守你免去你的试炼。"],[3,11,"我必快来，你要持守你所有的，免得人夺去你的冠冕。"],[3,12,"得胜的，我要叫他在我神殿中作柱子，他也必不再从那里出去。我又要将我神的名，和我神城的名，(这城就是从天上从我神那里降下来的新耶路撒冷)并我的新名，都写在他上面。"],[3,13,"圣灵向众教会所说的话，凡有耳的，就应当听。"],[3,14,"你要写信给老底嘉教会的使者，说，那为阿们的，为诚信真实见证的，在神创造万物之上为元首的,说,"],[3,15,"我知道你的行为，你也不冷也不热。我巴不得你或冷或热。"],[3,16,"你既如温水，也不冷也不热，所以我必从我口中把你吐出去。"],[3,17,"你说，我是富足，已经发了财，一样都不缺。却不知道你是那困苦，可怜，贫穷,瞎眼,赤身的。"],[3,18,"我劝你向我买火炼的金子，叫你富足。又买白衣穿上，叫你赤身的羞耻不露出来。又买眼药擦你的眼睛，使你能看见。"],[3,19,"凡我所疼爱的，我就责备管教他。所以你要发热心，也要悔改。"],[3,20,"看哪，我站在门外叩门。若有听见我声音就开门的，我要进到他那里去，我与他，他与我一同坐席。"],[3,21,"得胜的，我要赐他在我宝座上与我同坐，就如我得了胜，在我父的宝座上与他同坐一般。"],[3,22,"圣灵向众教会所说的话，凡有耳的，就应当听。"]];
+
+/* =====================================================================
+ * 小工具
+ * ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const ZW = /[\u200b-\u200d\u2060\ufeff]/g;
+function esc(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function clean(s) { return String(s ?? '').replace(ZW, '').replace(/\r\n?/g, '\n').trim(); }
+function truncate(s, n) { s = String(s || ''); return s.length > n ? s.slice(0, n) + '…' : s; }
+function shuffle(a) {
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+let toastTimer;
+function toast(msg, type) {
+  const el = $('#toast');
+  el.textContent = msg; el.dataset.type = type || 'info'; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), type === 'error' ? 4200 : 2600);
+}
+function download(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function today() { return new Date().toISOString().slice(0, 10); }
+
+/* =====================================================================
+ * 统一题库模型
+ *   填空: { id, chapter, verse, question, answers[] }   question 里用全角（…）标出填空
+ *   问答: { id, chapter, verse, question, answer }
+ *   verse 内部只存节号部分（"8" / "17-18"），显示和导出统一为 "启8:8"
+ *   所有来源（内置 / 本机 / 导入 / 界面编辑）都走同一套 normItem，格式永远一致
+ * ===================================================================== */
+const bankKey = (kind, diff) => kind + (diff === 'hard' ? 'Hard' : 'Easy');
+const kindOfKey = k => k.startsWith('fill') ? 'fill' : 'qa';
+const diffOfKey = k => k.endsWith('Hard') ? 'hard' : 'easy';
+
+function parseVerse(chapter, verse) {
+  let ch = Number(chapter) || 0;
+  let v = verse == null ? '' : String(verse).replace(ZW, '').trim();
+  const m = v.match(/^启?\s*(\d+)\s*[:：]\s*(.+)$/);
+  if (m) { if (!ch) ch = +m[1]; v = m[2]; } else { v = v.replace(/^启\s*/, ''); }
+  v = v.replace(/[~—–－～]/g, '-').replace(/\s+/g, '');
+  return { chapter: ch, verse: v };
+}
+const verseLabel = q => q.chapter === 0 ? '全书通用' : (q.verse ? `启${q.chapter}:${q.verse}` : `启${q.chapter}`);
+const verseKey = q => parseInt(q.verse, 10) || 0;
+const cmpQ = (a, b) => a.chapter - b.chapter || verseKey(a) - verseKey(b) || (a.id ?? 0) - (b.id ?? 0);
+
+/* 填空：把题目拆成 文本 / 填空 片段（全角括号才是填空；半角括号视为经文注释） */
+function splitFill(text) {
+  const segs = []; const re = /（([^）]+)）/g; let last = 0, m;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) segs.push({ t: 'text', v: text.slice(last, m.index) });
+    segs.push({ t: 'blank', v: m[1].trim() });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) segs.push({ t: 'text', v: text.slice(last) });
+  return segs;
+}
+const extractBlanks = text => splitFill(text).filter(s => s.t === 'blank').map(s => s.v);
+const fillPlain = text => splitFill(text).map(s => s.v).join('');
+/* 兼容旧格式：题目里没有括号、只有 answers 列表时，按顺序把答案自动包成（…） */
+function ensureBlanks(question, answers) {
+  if (/（[^）]+）/.test(question) || !answers.length) return question;
+  let out = '', pos = 0;
+  for (const a of answers) {
+    const i = question.indexOf(a, pos);
+    if (i < 0) continue;
+    out += question.slice(pos, i) + '（' + a + '）'; pos = i + a.length;
+  }
+  return out + question.slice(pos);
+}
+
+function normItem(kind, raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const { chapter, verse } = parseVerse(raw.chapter, raw.verse);
+  let question = clean(raw.question ?? raw.text ?? '');
+  if (!question || chapter < 0 || chapter > TOTAL_CHAPTERS) return null;
+  if (chapter === 0 && kind !== 'qa') return null;   // 只有问答题允许“不限章节”
+  const verse0 = chapter === 0 ? '' : verse;
+  const idNum = raw.id === undefined || raw.id === null || raw.id === '' ? NaN : Number(raw.id);
+  const id = Number.isFinite(idNum) ? idNum : null;
+  if (kind === 'fill') {
+    let answers = Array.isArray(raw.answers) ? raw.answers : Array.isArray(raw.answer) ? raw.answer
+      : (typeof raw.answer === 'string' && raw.answer ? [raw.answer] : []);
+    answers = answers.map(clean).filter(Boolean);
+    question = ensureBlanks(question, answers);
+    const blanks = extractBlanks(question);
+    if (!blanks.length) return null;
+    return { id, chapter, verse: verse0, question, answers: blanks };
+  }
+  let ans = raw.answer ?? raw.answers ?? '';
+  if (Array.isArray(ans)) ans = ans.join('\n');
+  return { id, chapter, verse: verse0, question, answer: clean(ans) };
+}
+const nextId = bank => bank.reduce((m, q) => Math.max(m, Number(q.id) || 0), 0) + 1;
+function assignIds(list) {
+  const used = new Set(); let max = list.reduce((m, q) => Math.max(m, q.id || 0), 0);
+  list.forEach(q => { if (q.id == null || used.has(q.id)) q.id = ++max; used.add(q.id); });
+}
+function normBanks(data) {
+  const out = { _updated: (data && data._updated) || '' };
+  BANK_KEYS.forEach(k => {
+    const arr = data && Array.isArray(data[k]) ? data[k] : [];
+    const list = arr.map(r => normItem(kindOfKey(k), r)).filter(Boolean);
+    assignIds(list); out[k] = list;
+  });
+  return out;
+}
+function exportItem(kind, q) {
+  const base = { id: q.id, chapter: q.chapter, verse: verseLabel(q), question: q.question };
+  return kind === 'fill' ? { ...base, answers: q.answers.slice() } : { ...base, answer: q.answer || '' };
+}
+function bankPayload() {
+  const o = { _version: 2, _updated: new Date().toISOString() };
+  BANK_KEYS.forEach(k => { o[k] = banks[k].slice().sort(cmpQ).map(q => exportItem(kindOfKey(k), q)); });
+  return o;
+}
+
+/* ---------- 加载 / 保存（本机自动保存，避免刷新丢失） ---------- */
+function readEmbedded() {
+  try { return JSON.parse($('#__BANK_OVERRIDE__').textContent); } catch (e) { return null; }
+}
+let EMBEDDED = null;
+let banks = normBanks(null);
+function loadBanks() {
+  EMBEDDED = normBanks(readEmbedded());
+  let local = null;
+  try { const t = localStorage.getItem(STORE_KEY); if (t) local = normBanks(JSON.parse(t)); } catch (e) {}
+  /* 谁更新用谁：重新生成的离线文件比旧的本机缓存新 → 用文件内置；本机有更晚的编辑 → 用本机 */
+  banks = (local && local._updated > EMBEDDED._updated) ? local : EMBEDDED;
+}
+function saveBanks() {
+  banks._updated = new Date().toISOString();
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(bankPayload())); }
+  catch (e) { toast('本机存储不可用，修改仅在本次打开期间有效，请及时导出备份', 'error'); }
+}
+const getBank = (kind, diff) => banks[bankKey(kind, diff)];
+
+/* ---------- 题池 ---------- */
+function dictPool() {
+  const out = [], have = new Set(), seen = new Set();
+  SCRIPTURE.forEach(([c, v, t]) => { have.add(c); out.push({ id: `s${c}:${v}`, chapter: c, verse: String(v), text: clean(t) }); });
+  ['easy', 'hard'].forEach(d => getBank('fill', d).forEach(q => {
+    if (have.has(q.chapter)) return;
+    const key = q.chapter + ':' + q.verse; if (seen.has(key)) return; seen.add(key);
+    out.push({ id: `f${d}${q.id}`, chapter: q.chapter, verse: q.verse, text: fillPlain(q.question) });
+  }));
+  return out;
+}
+function getPool(type, diff) {
+  if (type === 'dict') return dictPool();
+  return getBank(TYPES[type].kind, diff);
+}
+function chapterCounts(pool) {
+  const c = {}; pool.forEach(q => { c[q.chapter] = (c[q.chapter] || 0) + 1; }); return c;
+}
+
+/* =====================================================================
+ * 密码门（仅前端访问限制：只存哈希，不存明文；防君子不防专业人士）
+ * ===================================================================== */
+const GATE = { qa: '0ea13cb3ab9198571515fcf9f291aa099695893b657bc41d92003ea02de82ae9', editor: 'b9f41756411b9823c0c1d48bfb72de069ed00af207aec1ee6dc88d4c4c7f2b72' };const GATE_NAME = { qa: '问答测试', editor: '题库编辑' };
+function sha256(msg) {
+  const bytes = new TextEncoder().encode(msg), len = bytes.length;
+  const K = new Uint32Array(64), H = new Uint32Array(8);
+  for (let c = 2, n = 0; n < 64; c++) {
+    let prime = true; for (let d = 2; d * d <= c; d++) if (c % d === 0) { prime = false; break; }
+    if (!prime) continue;
+    if (n < 8) H[n] = Math.floor((Math.sqrt(c) % 1) * 4294967296);
+    K[n++] = Math.floor((Math.cbrt(c) % 1) * 4294967296);
+  }
+  const total = ((len + 9 + 63) >> 6) << 6, buf = new Uint8Array(total);
+  buf.set(bytes); buf[len] = 0x80;
+  const dv = new DataView(buf.buffer);
+  dv.setUint32(total - 8, Math.floor(len * 8 / 4294967296)); dv.setUint32(total - 4, (len * 8) >>> 0);
+  const w = new Uint32Array(64), rotr = (x, n) => (x >>> n) | (x << (32 - n));
+  for (let off = 0; off < total; off += 64) {
+    for (let i = 0; i < 16; i++) w[i] = dv.getUint32(off + i * 4);
+    for (let i = 16; i < 64; i++) {
+      const s0 = rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+      const s1 = rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+    }
+    let [a, b, c, d, e, f, g, h] = H;
+    for (let i = 0; i < 64; i++) {
+      const t1 = (h + (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) >>> 0;
+      const t2 = ((rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) >>> 0;
+      h = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+    }
+    [a, b, c, d, e, f, g, h].forEach((v, i) => { H[i] = (H[i] + v) >>> 0; });
+  }
+  return Array.from(H, x => x.toString(16).padStart(8, '0')).join('');
+}
+const gateHash = (kind, pw) => sha256('rev-gate-v1:' + kind + ':' + pw);
+const unlockedMem = {};
+function isUnlocked(kind) {
+  if (unlockedMem[kind]) return true;
+  try { return sessionStorage.getItem('rev_unlock_' + kind) === GATE[kind]; } catch (e) { return false; }
+}
+function setUnlocked(kind, on) {
+  unlockedMem[kind] = on;
+  try { on ? sessionStorage.setItem('rev_unlock_' + kind, GATE[kind]) : sessionStorage.removeItem('rev_unlock_' + kind); } catch (e) {}
+}
+let pwCallback = null, pwKind = null;
+function askPassword(kind, onOk) {
+  if (isUnlocked(kind)) { onOk(); return; }
+  pwKind = kind; pwCallback = onOk;
+  $('#pwTitle').textContent = '请输入「' + GATE_NAME[kind] + '」密码';
+  $('#pwHint').textContent = '验证通过后，本次打开期间无需重复输入。';
+  $('#pwErr').textContent = ''; $('#pwInput').value = '';
+  $('#pwModal').hidden = false;
+  setTimeout(() => $('#pwInput').focus(), 50);
+}
+function closePassword() { $('#pwModal').hidden = true; pwCallback = null; pwKind = null; }
+function submitPassword() {
+  const kind = pwKind, cb = pwCallback; if (!kind) return;
+  if (gateHash(kind, $('#pwInput').value) === GATE[kind]) { setUnlocked(kind, true); closePassword(); cb && cb(); return; }
+  $('#pwErr').textContent = '密码不正确，请重试';
+  const box = $('.modal-box'); box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+  $('#pwInput').value = ''; $('#pwInput').focus();
+}
+$('#pwOk').addEventListener('click', submitPassword);
+$('#pwCancel').addEventListener('click', closePassword);
+$('#pwModal').addEventListener('click', e => { if (e.target.id === 'pwModal') closePassword(); });
+$('#pwInput').addEventListener('keydown', e => {
+  if (e.isComposing || e.keyCode === 229) return;
+  if (e.key === 'Enter') submitPassword(); else if (e.key === 'Escape') closePassword();
+});
+
+/* =====================================================================
+ * 应用状态
+ * ===================================================================== */
+const ui = {
+  view: 'home',
+  setup: { type: 'fill', diff: 'easy', scope: 'chapter', chapter: null, group: 'all', count: 5 },
+  session: null,
+  editor: { kind: 'fill', diff: 'easy', filter: '', page: 1, formOpen: false, editingId: null, lastChapter: 1 }
+};
+
+/* =====================================================================
+ * 视图：首页
+ * ===================================================================== */
+function viewHome() {
+  const n = (k, d) => getBank(k, d).length;
+  const card = (type, color) => {
+    const T = TYPES[type];
+    const stat = type === 'dict' ? '' :
+      `<p class="stat">容易 ${n(T.kind, 'easy')} 题 · 困难 ${n(T.kind, 'hard')} 题</p>`;
+    return `<section class="card type-card">
+      <h2>${T.label}${type === 'qa' ? '<span class="lock" title="需要密码">🔒</span>' : ''}</h2><p class="desc">${T.desc}</p>${stat}
+      <button class="btn ${color}" data-act="openType" data-type="${type}" type="button">开始${T.label}</button></section>`;
+  };
+  return `<div class="container">
+    <h1 class="page-title">启示录背诵助手</h1>
+    <div class="grid-3">
+      ${card('fill', '')}${card('dict', 'btn-green')}${card('qa', '')}
+    </div>
+    <section class="admin-box">
+      <div><strong>🔒 题库管理</strong>
+        <p>添加、修改、删除填空题与问答题，导入导出题库备份。仅管理员使用，需要管理密码；修改自动保存在本机。</p></div>
+      <button class="btn btn-gray btn-sm" data-act="go" data-view="editor" type="button">进入题库编辑</button>
+    </section></div>`;
+}
+
+/* =====================================================================
+ * 视图：测试设置（填空 / 默写 / 问答 共用同一套界面）
+ * ===================================================================== */
+function ensureSetup() {
+  const s = ui.setup;
+  const counts = chapterCounts(getPool(s.type, s.diff));
+  if (s.chapter == null || !counts[s.chapter]) {
+    const ks = Object.keys(counts).map(Number).sort((a, b) => a - b);
+    s.chapter = ks.find(k => k > 0) ?? (ks.length ? ks[0] : null);   // 优先第一个有题的具体章节
+    s.group = 'all';
+  }
+  return counts;
+}
+function planInfo() {
+  const s = ui.setup, pool = getPool(s.type, s.diff);
+  if (s.scope === 'random') return { n: Math.min(s.count, pool.length), total: pool.length };
+  const total = s.chapter != null ? (chapterCounts(pool)[s.chapter] || 0) : 0;
+  if (s.group === 'all') return { n: total, total };
+  const g = Number(s.group); return { n: Math.max(0, Math.min(GROUP_SIZE, total - g * GROUP_SIZE)), total };
+}
+function viewSetup() {
+  const s = ui.setup, T = TYPES[s.type];
+  const counts = ensureSetup();
+  const pool = getPool(s.type, s.diff);
+
+  const diffCard = s.type === 'dict' ? '' : `
+    <section class="card"><h2>选择难度</h2>
+      <div class="seg">${['easy', 'hard'].map(d => `
+        <button class="seg-btn ${s.diff === d ? 'on' : ''}" data-act="setDiff" data-v="${d}" type="button">
+          ${DIFF[d]}<small>${getBank(T.kind, d).length} 题</small></button>`).join('')}
+      </div></section>`;
+
+  let scopeInner;
+  if (s.scope === 'chapter') {
+    const chList = s.type === 'qa' ? Array.from({ length: TOTAL_CHAPTERS + 1 }, (_, i) => i) : Array.from({ length: TOTAL_CHAPTERS }, (_, i) => i + 1);
+    const chOpts = chList.map(c => {
+      const name = c === 0 ? '全书通用（不限章节）' : `第 ${c} 章`;
+      return `<option value="${c}" ${counts[c] ? '' : 'disabled'} ${c === s.chapter ? 'selected' : ''}>${name}${counts[c] ? `（${counts[c]} 题）` : '（暂无）'}</option>`;
+    }).join('');
+    const total = s.chapter != null ? (counts[s.chapter] || 0) : 0;
+    const groups = Math.ceil(total / GROUP_SIZE);
+    let gOpts = `<option value="all" ${s.group === 'all' ? 'selected' : ''}>本章全部（${total} 题）</option>`;
+    for (let g = 0; g < groups; g++) {
+      const a = g * GROUP_SIZE + 1, b = Math.min(total, (g + 1) * GROUP_SIZE);
+      gOpts += `<option value="${g}" ${String(s.group) === String(g) ? 'selected' : ''}>第 ${g + 1} 组（第 ${a}–${b} 题）</option>`;
+    }
+    scopeInner = `
+      <label class="label" for="selChapter">章节${s.type === 'qa' ? '（含不限章节的全书问题）' : ''}</label>
+      <select id="selChapter" class="select" data-change="setChapter">${chOpts}</select>
+      <label class="label" for="selGroup">范围（每 ${GROUP_SIZE} 题一组）</label>
+      <select id="selGroup" class="select" data-change="setGroup" ${total ? '' : 'disabled'}>${gOpts}</select>`;
+  } else {
+    scopeInner = `
+      <label class="label" for="selCount">随机题数（从全部 ${pool.length} 题中抽取）</label>
+      <select id="selCount" class="select" data-change="setCount">
+        ${[5, 10, 15, 20].map(c => `<option value="${c}" ${s.count === c ? 'selected' : ''}>${c} 题</option>`).join('')}
+      </select>`;
+  }
+  const plan = planInfo();
+  return `<div class="container narrow">
+    <button class="btn btn-ghost btn-sm back" data-act="go" data-view="home" type="button">← 返回首页</button>
+    <h1 class="page-title">${T.label}</h1>
+    ${diffCard}
+    <section class="card"><h2>选择范围</h2>
+      <div class="seg">
+        <button class="seg-btn ${s.scope === 'chapter' ? 'on' : ''}" data-act="setScope" data-v="chapter" type="button">按章节</button>
+        <button class="seg-btn ${s.scope === 'random' ? 'on' : ''}" data-act="setScope" data-v="random" type="button">随机</button>
+      </div>${scopeInner}
+    </section>
+    <button class="btn btn-block" data-act="start" type="button" ${plan.n ? '' : 'disabled'}>
+      ${plan.n ? `开始${T.label}（${plan.n} 题）` : '当前范围暂无题目'}</button>
+    ${plan.n ? '' : `<p class="muted small" style="text-align:center;margin-top:10px">请换一个章节 / 难度，或到「题库编辑」中添加题目。</p>`}
+  </div>`;
+}
+
+/* =====================================================================
+ * 测试会话
+ * ===================================================================== */
+function buildQuestions() {
+  const s = ui.setup;
+  const pool = getPool(s.type, s.diff).slice();
+  if (s.scope === 'random') return shuffle(pool).slice(0, s.count);
+  const list = pool.filter(q => q.chapter === s.chapter).sort(cmpQ);
+  if (s.group === 'all') return list;
+  const g = Number(s.group); return list.slice(g * GROUP_SIZE, g * GROUP_SIZE + GROUP_SIZE);
+}
+function startSession() {
+  const s = ui.setup, qs = buildQuestions();
+  if (!qs.length) { toast('当前范围没有题目', 'error'); return; }
+  const total = s.scope === 'chapter' && s.chapter != null ? (chapterCounts(getPool(s.type, s.diff))[s.chapter] || 0) : 0;
+  ui.session = {
+    type: s.type, diff: s.diff, scope: s.scope, chapter: s.chapter, group: s.group,
+    groupCount: Math.ceil(total / GROUP_SIZE), questions: qs, idx: 0, finished: false,
+    answers: qs.map(() => s.type === 'fill' ? [] : ''), shown: qs.map(() => false), hints: qs.map(() => 0)
+  };
+  go('quiz');
+}
+function sessionTitle(S) {
+  if (S.scope === 'random') return '随机';
+  return (S.chapter === 0 ? '全书通用' : `第 ${S.chapter} 章`) + ' · ' + (S.group === 'all' ? '全部' : `第 ${Number(S.group) + 1} 组`);
+}
+
+/* ---------- 判分 ---------- */
+const normAns = s => String(s || '').replace(/[\s\u3000"'“”‘’「」『』.,，。、；;：:！!？?]/g, '');
+function checkFill(q, user) {
+  const results = q.answers.map((a, i) => {
+    const u = (user && user[i]) || '';
+    return { answer: a, user: u, ok: normAns(u) === normAns(a) };
+  });
+  return { results, correct: results.filter(r => r.ok).length, total: results.length };
+}
+const normDict = s => Array.from(String(s || '').replace(/[^\p{L}\p{N}]/gu, ''));
+function lcsLen(a, b) {
+  if (!a.length || !b.length) return 0;
+  let prev = new Array(b.length + 1).fill(0);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = new Array(b.length + 1).fill(0);
+    for (let j = 1; j <= b.length; j++) cur[j] = a[i - 1] === b[j - 1] ? prev[j - 1] + 1 : Math.max(prev[j], cur[j - 1]);
+    prev = cur;
+  }
+  return prev[b.length];
+}
+const dictPrefixLen = (S, i) => Math.min(S.questions[i].text.length, 5 + 3 * (S.hints[i] || 0));
+function checkDict(S, i) {
+  const q = S.questions[i], n = dictPrefixLen(S, i);
+  const prefix = q.text.slice(0, n), rest = q.text.slice(n), user = S.answers[i] || '';
+  const a = normDict(rest), b = normDict(user);
+  const acc = !a.length ? 100 : Math.round(lcsLen(a, b) / Math.max(a.length, b.length) * 100);
+  return { prefix, rest, user, accuracy: acc, ok: acc >= 80 };
+}
+function scoreSession(S) {
+  if (S.type === 'fill') {
+    let c = 0, t = 0;
+    S.questions.forEach((q, i) => { const r = checkFill(q, S.answers[i]); c += r.correct; t += r.total; });
+    return { correct: c, total: t, pct: t ? Math.round(c / t * 100) : 0, unit: '空' };
+  }
+  if (S.type === 'dict') {
+    let c = 0; S.questions.forEach((q, i) => { if (checkDict(S, i).ok) c++; });
+    const t = S.questions.length; return { correct: c, total: t, pct: t ? Math.round(c / t * 100) : 0, unit: '节' };
+  }
+  return null;
+}
+
+/* ---------- 填空题渲染（文本里的每个空 = 一个输入框；结果对照复用同一套片段） ---------- */
+function fillInputsHtml(q, user, showAns) {
+  let bi = 0;
+  return splitFill(q.question).map(s => {
+    if (s.t === 'text') return esc(s.v);
+    const i = bi++, val = (user && user[i]) || '';
+    let cls = 'blank';
+    if (showAns) cls += normAns(val) === normAns(s.v) ? ' ok' : ' bad';
+    const w = Math.min(Math.max(s.v.length * 1.1 + 1.4, 4), 22);
+    return `<input class="${cls}" type="text" value="${esc(val)}" data-input="fill" data-i="${i}" style="width:${w}em"
+      autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" aria-label="第 ${i + 1} 个空">`;
+  }).join('');
+}
+function fillReviewHtml(q, user) {
+  let bi = 0;
+  return splitFill(q.question).map(s => {
+    if (s.t === 'text') return esc(s.v);
+    const i = bi++, u = (user && user[i]) || '';
+    const ok = normAns(u) === normAns(s.v);
+    if (ok) return `<span class="fb ok">${esc(s.v)}</span>`;
+    return `<span class="fb bad">${u ? `<s>${esc(u)}</s>` : '<s>未填</s>'}${esc(s.v)}</span>`;
+  }).join('');
+}
+
+/* =====================================================================
+ * 视图：测试页（三种题型共用同一个外壳）
+ * ===================================================================== */
+function quizBody(S, q, i) {
+  if (S.type === 'fill') {
+    return `<p class="prompt">请填写括号中的内容：</p>
+      <div class="qtext">${fillInputsHtml(q, S.answers[i], S.shown[i])}</div>`;
+  }
+  if (S.type === 'qa') {
+    return `<div class="qtext plain">${esc(q.question)}</div>
+      <label class="label" for="qaInput">你的回答</label>
+      <textarea id="qaInput" class="textarea" rows="5" data-input="text" placeholder="请在此写下你的回答……">${esc(S.answers[i])}</textarea>`;
+  }
+  const n = dictPrefixLen(S, i), more = n < q.text.length;
+  return `<p class="prompt">请根据开头提示，默写后面的经文：</p>
+    <div class="panel" style="margin-top:0"><span class="hint-pre">${esc(q.text.slice(0, n))}</span><span class="muted">……（请继续默写）</span></div>
+    <textarea id="dictInput" class="textarea" style="margin-top:10px" rows="5" data-input="text" placeholder="请在此继续默写经文……">${esc(S.answers[i])}</textarea>
+    ${more ? `<button class="btn btn-ghost btn-sm" style="margin-top:10px" data-act="moreHint" type="button">💡 显示更多提示</button>` : ''}`;
+}
+function quizFeedback(S, q, i) {
+  if (!S.shown[i]) return '';
+  if (S.type === 'fill') {
+    const r = checkFill(q, S.answers[i]);
+    return `<div class="panel"><h4>完整经文（对照）</h4><div class="txt">${fillReviewHtml(q, S.answers[i])}</div>
+      <div class="score-line">本题得分：<span class="${r.correct === r.total ? 'good' : 'poor'}">${r.correct}/${r.total}</span></div></div>`;
+  }
+  if (S.type === 'qa') {
+    return `<div class="panel ref"><h4>参考答案</h4><div class="txt">${q.answer ? esc(q.answer) : '<span class="muted">（暂无参考答案）</span>'}</div></div>`;
+  }
+  const r = checkDict(S, i);
+  return `<div class="panel"><h4>完整经文</h4><div class="txt"><span class="hint-pre">${esc(r.prefix)}</span>${esc(r.rest)}</div>
+    <h4 style="margin-top:10px">你的默写</h4><div class="txt"><span class="hint-pre">${esc(r.prefix)}</span>${r.user ? esc(r.user) : '<span class="muted">（未填写）</span>'}</div>
+    <div class="score-line"><span class="${r.ok ? 'good' : 'poor'}">${r.ok ? '✅ 默写正确' : '❌ 默写有误'}</span> · 准确率 ${r.accuracy}%</div></div>`;
+}
+function viewQuiz() {
+  const S = ui.session, i = S.idx, q = S.questions[i], n = S.questions.length;
+  const last = i === n - 1;
+  return `<div class="container narrow">
+    <div class="quiz-head">
+      <button class="btn btn-ghost btn-sm" data-act="go" data-view="setup" type="button">← 返回设置</button>
+      <span class="tag">${TYPES[S.type].label} · ${esc(sessionTitle(S))}</span>
+    </div>
+    <section class="card">
+      <div class="quiz-meta"><span>第 ${i + 1} / ${n} 题</span><span class="vtag">${esc(verseLabel(q))}</span></div>
+      <div class="progress"><i style="width:${Math.round((i + 1) / n * 100)}%"></i></div>
+      <div id="qBody">${quizBody(S, q, i)}</div>
+      <div id="qFeedback">${quizFeedback(S, q, i)}</div>
+    </section>
+    <div class="actions sticky">
+      <button class="btn wide" data-act="toggleAnswer" type="button">${S.shown[i] ? '隐藏答案' : '查看答案'}</button>
+      <button class="btn btn-gray" data-act="prev" type="button" ${i === 0 ? 'disabled' : ''}>上一题</button>
+      ${last ? `<button class="btn btn-green" data-act="finish" type="button">完成测试</button>`
+             : `<button class="btn btn-green" data-act="next" type="button">下一题</button>`}
+    </div></div>`;
+}
+
+/* =====================================================================
+ * 视图：结果页（三种题型共用）
+ * ===================================================================== */
+function resultItem(S, q, i) {
+  const head = `<div class="item-title">第 ${i + 1} 题 · ${esc(verseLabel(q))}</div>`;
+  if (S.type === 'fill') {
+    const r = checkFill(q, S.answers[i]);
+    return `<div class="item">${head}<div class="txt qtext plain" style="white-space:pre-wrap">${fillReviewHtml(q, S.answers[i])}</div>
+      <p class="small ${r.correct === r.total ? 'good' : 'poor'}" style="margin:6px 0 0">得分 ${r.correct}/${r.total}</p></div>`;
+  }
+  if (S.type === 'qa') {
+    const my = S.answers[i];
+    return `<div class="item">${head}<div class="qtext plain" style="font-weight:600">${esc(q.question)}</div>
+      <div class="panel"><h4>我的回答</h4><div class="txt">${my ? esc(my) : '<span class="muted">（未作答）</span>'}</div></div>
+      <div class="panel ref"><h4>参考答案</h4><div class="txt">${q.answer ? esc(q.answer) : '<span class="muted">（暂无参考答案）</span>'}</div></div></div>`;
+  }
+  const r = checkDict(S, i);
+  return `<div class="item">${head}
+    <p class="small ${r.ok ? 'good' : 'poor'}" style="margin:0 0 6px">${r.ok ? '✅ 默写正确' : '❌ 默写有误'} · 准确率 ${r.accuracy}%</p>
+    <div class="panel" style="margin-top:0"><h4>完整经文</h4><div class="txt"><span class="hint-pre">${esc(r.prefix)}</span>${esc(r.rest)}</div></div>
+    <div class="panel"><h4>我的默写</h4><div class="txt"><span class="hint-pre">${esc(r.prefix)}</span>${r.user ? esc(r.user) : '<span class="muted">（未填写）</span>'}</div></div></div>`;
+}
+function viewResult() {
+  const S = ui.session, sc = scoreSession(S);
+  const canNext = S.scope === 'chapter' && S.group !== 'all' && Number(S.group) + 1 < S.groupCount;
+  const diffTxt = S.type === 'dict' ? '' : ` · 难度：${DIFF[S.diff]}`;
+  return `<div class="container narrow">
+    <button class="btn btn-ghost btn-sm back" data-act="go" data-view="setup" type="button">← 返回设置</button>
+    <section class="card"><div id="exportArea">
+      <div class="result-head"><h2>${TYPES[S.type].label}完成 🎉</h2>
+        <div class="muted small">${esc(sessionTitle(S))} · 共 ${S.questions.length} 题${diffTxt}</div></div>
+      ${sc ? `<div class="scorebox"><div>得分<b class="${sc.pct >= 60 ? 'good' : 'poor'}">${sc.correct}/${sc.total}${sc.unit}</b></div>
+        <div>正确率<b class="${sc.pct >= 60 ? 'good' : 'poor'}">${sc.pct}%</b></div></div>` : ''}
+      ${S.questions.map((q, i) => resultItem(S, q, i)).join('')}
+    </div>
+    <div class="actions result-actions" style="margin-top:14px">
+      <button class="btn btn-purple" data-act="exportImage" type="button">导出图片</button>
+      ${canNext ? `<button class="btn" data-act="nextGroup" type="button">练习下一组</button>` : ''}
+      <button class="btn btn-green" data-act="again" type="button">再来一次</button>
+      <button class="btn btn-gray" data-act="go" data-view="home" type="button">返回首页</button>
+    </div></section></div>`;
+}
+
+/* =====================================================================
+ * 视图：题库编辑器（填空 / 问答 同一界面）
+ * ===================================================================== */
+function editorFiltered() {
+  const E = ui.editor, kw = E.filter.trim().toLowerCase();
+  const all = getBank(E.kind, E.diff).slice().sort(cmpQ);
+  if (!kw) return all;
+  return all.filter(q => {
+    const ans = E.kind === 'fill' ? q.answers.join(' ') : (q.answer || '');
+    return (q.question + ' ' + ans + ' ' + verseLabel(q)).toLowerCase().includes(kw);
+  });
+}
+function editorRow(q) {
+  const E = ui.editor;
+  const qHtml = esc(truncate(q.question, 140)).replace(/（([^）]+)）/g, '<mark>（$1）</mark>');
+  const extra = E.kind === 'fill'
+    ? `<span>${q.answers.length} 个填空</span>`
+    : `<span>${q.answer ? '有答案' : '无答案'}</span>`;
+  return `<article class="row"><div class="row-main">
+      <div class="row-top"><span class="vtag">${esc(verseLabel(q))}</span><span>#${q.id}</span>${extra}</div>
+      <p class="row-q">${qHtml}</p>
+      ${E.kind === 'qa' ? `<p class="row-a">答：${esc(truncate(q.answer, 80)) || '—'}</p>` : ''}
+    </div>
+    <div class="row-actions">
+      <button class="btn btn-gray btn-sm" data-act="edEdit" data-id="${q.id}" type="button">编辑</button>
+      <button class="btn btn-gray btn-sm" data-act="edDup" data-id="${q.id}" type="button">复制</button>
+      <button class="btn btn-red btn-sm" data-act="edDel" data-id="${q.id}" type="button">删除</button>
+    </div></article>`;
+}
+function viewEditor() {
+  const E = ui.editor;
+  const list = editorFiltered();
+  const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  if (E.page > pages) E.page = pages;
+  const items = list.slice((E.page - 1) * PAGE_SIZE, E.page * PAGE_SIZE);
+  const n = (k, d) => getBank(k, d).length;
+  return `<div class="container wide">
+    <div class="row-between back">
+      <button class="btn btn-ghost btn-sm" data-act="go" data-view="home" type="button">← 返回首页</button>
+      <button class="btn btn-gray btn-sm" data-act="lockEditor" type="button">🔒 锁定并退出</button>
+    </div>
+    <h1 class="page-title">题库编辑器</h1>
+    <section class="card">
+      <div class="seg" style="margin-bottom:10px">
+        <button class="seg-btn ${E.kind === 'fill' ? 'on' : ''}" data-act="edKind" data-v="fill" type="button">填空题库</button>
+        <button class="seg-btn ${E.kind === 'qa' ? 'on' : ''}" data-act="edKind" data-v="qa" type="button">问答题库</button>
+      </div>
+      <div class="seg">
+        ${['easy', 'hard'].map(d => `<button class="seg-btn ${E.diff === d ? 'on' : ''}" data-act="edDiff" data-v="${d}" type="button">
+          ${DIFF[d]}<small>${n(E.kind, d)} 题</small></button>`).join('')}
+      </div>
+      <div class="toolbar">
+        <input class="input" id="edSearch" type="search" placeholder="搜索经文 / 题目 / 答案…" value="${esc(E.filter)}" data-input="edSearch">
+        <button class="btn btn-green btn-sm" data-act="edNew" type="button">＋ 新建</button>
+        <button class="btn btn-sm" data-act="edImport" type="button">导入合并</button>
+        <button class="btn btn-purple btn-sm" data-act="edExport" type="button">导出 TXT</button>
+      </div>
+      <div id="edList">${items.length ? items.map(editorRow).join('') : '<div class="empty">暂无题目</div>'}</div>
+      ${pages > 1 ? `<div class="pager">
+        <button class="btn btn-gray btn-sm" data-act="edPage" data-p="${E.page - 1}" type="button" ${E.page <= 1 ? 'disabled' : ''}>上一页</button>
+        <span class="muted small">${E.page} / ${pages}（共 ${list.length} 题）</span>
+        <button class="btn btn-gray btn-sm" data-act="edPage" data-p="${E.page + 1}" type="button" ${E.page >= pages ? 'disabled' : ''}>下一页</button></div>` : ''}
+    </section>
+    <section class="card"><h2>数据管理</h2>
+      <p class="desc">所有修改自动保存在本机浏览器。换设备 / 换浏览器前，请先「导出全部备份」或「生成离线 HTML」。</p>
+      <div class="toolbar" style="margin:0">
+        <button class="btn btn-purple btn-sm" data-act="edExportAll" type="button">导出全部备份 (.json)</button>
+        <button class="btn btn-sm" data-act="edImport" type="button">导入（单库 / 全部备份）</button>
+        <button class="btn btn-gray btn-sm" data-act="edOffline" type="button">生成离线 HTML</button>
+        <button class="btn btn-gray btn-sm" data-act="edReset" type="button">恢复为文件内置题库</button>
+      </div>
+      <p class="muted small" style="margin:10px 0 0">导入文件格式：JSON 数组（.txt 或 .json）。按 id 匹配则更新，否则追加；完全相同的题目自动跳过。填空题用全角（…）标出空位；半角 (…) 视为经文注释，不会挖空。</p>
+    </section></div>`;
+}
+function previewBlanksHtml(text) {
+  const b = extractBlanks(text);
+  return b.length ? `将生成 <b>${b.length}</b> 个填空：${b.map(x => `<mark>${esc(x)}</mark>`).join(' ')}`
+                  : '还没有填空：选中文字后点「设为填空」，或直接输入全角括号（…）';
+}
+function viewForm() {
+  const E = ui.editor, kind = E.kind;
+  const q = E.editingId == null ? null : getBank(kind, E.diff).find(x => x.id === E.editingId);
+  const isNew = !q;
+  const ch = q ? q.chapter : E.lastChapter;
+  const chStart = kind === 'qa' ? 0 : 1;
+  const chOpts = Array.from({ length: TOTAL_CHAPTERS + 1 - chStart }, (_, i) => i + chStart).map(c => `<option value="${c}" ${c === ch ? 'selected' : ''}>${c === 0 ? '不限章节（全书通用）' : `第 ${c} 章`}</option>`).join('');
+  const title = `${isNew ? '新建' : '编辑'}${DIFF[E.diff]}${kind === 'fill' ? '填空题' : '问答题'}`;
+  const qLabel = kind === 'fill' ? '题目内容（用全角括号 （…） 标出填空位）' : '问题';
+  const fillTools = kind === 'fill' ? `
+      <div class="actions" style="margin-top:8px">
+        <button class="btn btn-gray btn-sm" data-act="fMark" type="button" style="flex:none">选中文字 → 设为填空</button>
+        <button class="btn btn-gray btn-sm" data-act="fUnmark" type="button" style="flex:none">清除全部填空标记</button>
+      </div>
+      <div class="preview" id="blankPreview">${previewBlanksHtml(q ? q.question : '')}</div>` : '';
+  const ansField = kind === 'qa' ? `
+      <label class="label" for="fAnswer">参考答案</label>
+      <textarea id="fAnswer" class="textarea" rows="6">${esc(q ? q.answer : '')}</textarea>` : '';
+  return `<div class="container narrow">
+    <button class="btn btn-ghost btn-sm back" data-act="formCancel" type="button">← 返回列表</button>
+    <section class="card"><h2>${title}</h2>
+      <div class="two-col">
+        <div><label class="label" for="fChapter">章节</label><select id="fChapter" class="select">${chOpts}</select></div>
+        <div><label class="label" for="fVerse">节号（可留空）</label>
+          <input id="fVerse" class="input" type="text" value="${esc(q ? q.verse : '')}" placeholder="可留空；如 8 或 17-18" inputmode="text" autocomplete="off"></div>
+      </div>
+      <label class="label" for="fQuestion">${qLabel}</label>
+      <textarea id="fQuestion" class="textarea" rows="${kind === 'fill' ? 6 : 4}" data-input="fQuestion">${esc(q ? q.question : '')}</textarea>
+      ${fillTools}${ansField}
+      <div class="actions" style="margin-top:18px">
+        <button class="btn btn-gray" data-act="formCancel" type="button">取消</button>
+        <button class="btn" data-act="formSave" type="button">${isNew ? '新建' : '保存修改'}</button>
+      </div>
+    </section></div>`;
+}
+
+/* =====================================================================
+ * 路由 / 渲染（同步渲染，无延时，不会出现“DOM 还没出来”的竞态）
+ * ===================================================================== */
+const VIEWS = { home: viewHome, setup: viewSetup, quiz: viewQuiz, result: viewResult, editor: viewEditor, form: viewForm };
+const app = $('#app');
+function guard(v) {
+  const S = ui.session;
+  if ((v === 'editor' || v === 'form') && !isUnlocked('editor')) return 'home';
+  if (v === 'setup' && ui.setup.type === 'qa' && !isUnlocked('qa')) return 'home';
+  if ((v === 'quiz' || v === 'result') && S && S.type === 'qa' && !isUnlocked('qa')) return 'home';
+  if (v === 'quiz') return S && !S.finished ? 'quiz' : (S ? 'result' : 'home');
+  if (v === 'result') return S && S.finished ? 'result' : 'home';
+  if (v === 'form') return ui.editor.formOpen ? 'form' : 'editor';
+  return VIEWS[v] ? v : 'home';
+}
+function render(keepScroll) {
+  ui.view = guard(ui.view);
+  const y = window.scrollY;
+  app.classList.toggle('still', !!keepScroll);   // 原地刷新（查看答案/切换难度等）不重播淡入动画
+  app.innerHTML = VIEWS[ui.view]();
+  $('#homeBtn').hidden = ui.view === 'home';
+  if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0);
+}
+function go(view, opts) {
+  ui.view = view;
+  if (!(opts && opts.replace)) { try { history.pushState({ view }, ''); } catch (e) {} }
+  else { try { history.replaceState({ view }, ''); } catch (e) {} }
+  render();
+}
+window.addEventListener('popstate', e => { ui.view = (e.state && e.state.view) || 'home'; render(); });
+
+/* =====================================================================
+ * 导入 / 导出 / 离线文件
+ * ===================================================================== */
+function pickFile() {
+  return new Promise((resolve, reject) => {
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = '.txt,.json,application/json,text/plain'; inp.style.display = 'none';
+    inp.onchange = () => {
+      const f = inp.files && inp.files[0]; inp.remove();
+      if (!f) return reject(new Error('未选择文件'));
+      const r = new FileReader();
+      r.onload = () => resolve({ name: f.name, text: String(r.result) });
+      r.onerror = () => reject(r.error || new Error('读取文件失败'));
+      r.readAsText(f, 'utf-8');
+    };
+    document.body.appendChild(inp); inp.click();
+  });
+}
+function parseImportText(text) {
+  let t = String(text || '').replace(/^\ufeff/, '').trim();
+  if (!t) throw new Error('文件是空的');
+  let data;
+  try { data = JSON.parse(t); }
+  catch (e) {
+    try { data = JSON.parse('[' + t.replace(/^\[|\]$/g, '').replace(/}\s*{/g, '},{') + ']'); }
+    catch (e2) { throw new Error('不是有效的 JSON。请确认是 [{...},{...}] 数组格式（可直接使用本页导出的文件）'); }
+  }
+  return data;
+}
+function mergeInto(kind, diff, arr) {
+  const bank = getBank(kind, diff);
+  const r = { add: 0, upd: 0, dup: 0, bad: 0 };
+  (Array.isArray(arr) ? arr.flat(Infinity) : []).forEach(raw => {
+    const item = normItem(kind, raw);
+    if (!item) { r.bad++; return; }
+    const idx = item.id != null ? bank.findIndex(b => b.id === item.id) : -1;
+    if (idx >= 0) { bank[idx] = { ...item, id: bank[idx].id }; r.upd++; return; }
+    if (bank.some(b => b.chapter === item.chapter && b.verse === item.verse && b.question === item.question)) { r.dup++; return; }
+    if (item.id == null || bank.some(b => b.id === item.id)) item.id = nextId(bank);
+    bank.push(item); r.add++;
+  });
+  return r;
+}
+async function doImport() {
+  try {
+    const { text } = await pickFile();
+    const data = parseImportText(text);
+    const E = ui.editor; const tot = { add: 0, upd: 0, dup: 0, bad: 0 };
+    const acc = r => { for (const k in tot) tot[k] += r[k]; };
+    if (Array.isArray(data)) acc(mergeInto(E.kind, E.diff, data));
+    else if (data && BANK_KEYS.some(k => Array.isArray(data[k]))) BANK_KEYS.forEach(k => { if (Array.isArray(data[k])) acc(mergeInto(kindOfKey(k), diffOfKey(k), data[k])); });
+    else if (data && Array.isArray(data.questions)) acc(mergeInto(E.kind, E.diff, data.questions));
+    else acc(mergeInto(E.kind, E.diff, [data]));
+    saveBanks(); render(true);
+    toast(`导入完成：新增 ${tot.add}，更新 ${tot.upd}，重复跳过 ${tot.dup}` + (tot.bad ? `，无效 ${tot.bad}（章节须为 0–22（0=全书通用，仅问答题）；填空题须有章节且含全角（）空位）` : ''), tot.bad ? 'info' : 'success');
+  } catch (e) {
+    if (e && e.message === '未选择文件') return;
+    toast('导入失败：' + (e.message || e), 'error');
+  }
+}
+function exportCurrent() {
+  const E = ui.editor, data = getBank(E.kind, E.diff).slice().sort(cmpQ);
+  if (!data.length) { toast('当前题库为空，无法导出', 'error'); return; }
+  const name = `${DIFF[E.diff]}${E.kind === 'fill' ? '填空题库' : '问答题库'}_${today()}.txt`;
+  download(new Blob([JSON.stringify(data.map(q => exportItem(E.kind, q)), null, 2)], { type: 'text/plain;charset=utf-8' }), name);
+  toast('已导出：' + name, 'success');
+}
+function exportAll() {
+  download(new Blob([JSON.stringify(bankPayload(), null, 2)], { type: 'application/json;charset=utf-8' }), `启示录题库全部备份_${today()}.json`);
+  toast('已导出全部备份', 'success');
+}
+function buildOfflineHtml() {
+  const doc = new DOMParser().parseFromString('<!DOCTYPE html>' + document.documentElement.outerHTML, 'text/html');
+  const a = doc.getElementById('app'); if (a) { a.innerHTML = ''; a.removeAttribute('class'); }
+  const t = doc.getElementById('toast'); if (t) { t.removeAttribute('class'); t.textContent = ''; t.removeAttribute('data-type'); }
+  doc.documentElement.removeAttribute('data-theme');
+  const holder = doc.getElementById('__BANK_OVERRIDE__');
+  holder.textContent = JSON.stringify(bankPayload()).replace(/</g, '\\u003c');
+  return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+}
+function exportOffline() {
+  try {
+    const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    download(new Blob([buildOfflineHtml()], { type: 'text/html;charset=utf-8' }), `index_${stamp}.html`);
+    toast('已生成离线 HTML（已包含当前全部题库）', 'success');
+  } catch (e) { console.error(e); toast('生成失败：' + e.message, 'error'); }
+}
+/* ---------- 导出图片：用 Canvas 自行排版绘制（不依赖第三方库，离线可用，不会出现文字错位） ---------- */
+function exportCanvas(S) {
+  const cs = getComputedStyle(document.documentElement), v = n => cs.getPropertyValue(n).trim();
+  const C = { bg: v('--surface'), text: v('--text'), muted: v('--muted'), border: v('--border'), s2: v('--surface2'),
+    ok: v('--ok'), bad: v('--bad'), okbg: v('--ok-bg'), badbg: v('--bad-bg'), note: v('--note-bg'), purple: v('--purple'), primary: v('--primary') };
+  const FF = getComputedStyle(document.body).fontFamily;
+  const W = 760, PAD = 28, IW = W - PAD * 2;
+  const NO_START = '，。、；：！？）》」』”’,.;:!?)';
+  let fs = 17;                                         // 当前段落字号（fontOf 使用）
+  const STYLE = {                                      // st -> [粗体, 文字色, 背景色, 删除线]
+    n: [0, C.text], b: [1, C.text], hint: [1, C.primary], mut: [0, C.muted],
+    ok: [1, C.ok, C.okbg], bad: [1, C.bad, C.badbg], strike: [0, C.muted, C.badbg, 1]
+  };
+  const fontOf = st => `${STYLE[st][0] ? '700' : '400'} ${fs}px ${FF}`;
+  const rr = (ctx, x, y, w, h, r, fill) => { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); ctx.fillStyle = fill; ctx.fill(); };
+
+  /* 段落：runs=[{t,st}]，逐字换行（中文友好，行首不放标点），返回占用高度 */
+  function para(ctx, runs, x, y, w, size, lh, draw) {
+    fs = size;
+    const lines = []; let cur = [], cw = 0;
+    for (const r of runs) for (const ch of Array.from(r.t)) {
+      if (ch === '\n') { lines.push(cur); cur = []; cw = 0; continue; }
+      if (ch === ' ' && !cur.length) continue;
+      ctx.font = fontOf(r.st || 'n');
+      const wd = ctx.measureText(ch).width;
+      if (cw + wd > w && cur.length && !NO_START.includes(ch)) { lines.push(cur); cur = []; cw = 0; if (ch === ' ') continue; }
+      cur.push({ ch, st: r.st || 'n', w: wd }); cw += wd;
+    }
+    lines.push(cur);
+    if (draw) {
+      ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+      lines.forEach((ln, i) => {
+        const cy = y + i * lh + lh / 2; let cx = x;
+        for (let k = 0; k < ln.length;) {            // 先画连续同样式片段的背景
+          let j = k, tw = 0; while (j < ln.length && ln[j].st === ln[k].st) { tw += ln[j].w; j++; }
+          const bg = STYLE[ln[k].st][2];
+          if (bg) rr(ctx, cx - 1, cy - size * 0.78, tw + 2, size * 1.56, 4, bg);
+          cx += tw; k = j;
+        }
+        cx = x;
+        for (const c of ln) {
+          const [, col, , strike] = STYLE[c.st];
+          ctx.font = fontOf(c.st); ctx.fillStyle = col; ctx.fillText(c.ch, cx, cy);
+          if (strike) { ctx.fillRect(cx, cy, c.w, 1.2); }
+          cx += c.w;
+        }
+      });
+    }
+    return lines.length * lh;
+  }
+  /* 带标签的面板（我的回答 / 参考答案 / 完整经文…） */
+  function panel(ctx, label, runs, y, bg, bar, draw) {
+    const inner = IW - 28, h = para(ctx, runs, 0, 0, inner, 15, 26, false) + 22 + 20;
+    if (draw) {
+      rr(ctx, PAD, y, IW, h, 10, bg);
+      if (bar) rr(ctx, PAD, y, 4, h, 2, bar);
+      ctx.font = `600 12px ${FF}`; ctx.fillStyle = C.muted; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+      ctx.fillText(label, PAD + 14, y + 17);
+      para(ctx, runs, PAD + 14, y + 30, inner, 15, 26, true);
+    }
+    return h + 10;
+  }
+  const text = (ctx, str, x, y, font, color, align) => { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align || 'left'; ctx.textBaseline = 'middle'; ctx.fillText(str, x, y); };
+  const R = (t, st) => ({ t, st });
+  const fillRuns = (q, user) => {
+    let bi = 0; const out = [];
+    splitFill(q.question).forEach(sg => {
+      if (sg.t === 'text') { out.push(R(sg.v, 'n')); return; }
+      const i = bi++, u = (user && user[i]) || '';
+      if (normAns(u) === normAns(sg.v)) out.push(R(sg.v, 'ok'));
+      else { out.push(R(u || '未填', 'strike')); out.push(R(' ', 'bad')); out.push(R(sg.v, 'bad')); }
+    });
+    return out;
+  };
+
+  function layout(ctx, draw) {
+    let y = PAD;
+    const sc = scoreSession(S);
+    if (draw) text(ctx, `${TYPES[S.type].label}完成 🎉`, W / 2, y + 16, `800 26px ${FF}`, C.text, 'center');
+    y += 38;
+    const sub = `${sessionTitle(S)} · 共 ${S.questions.length} 题` + (S.type === 'dict' ? '' : ` · 难度：${DIFF[S.diff]}`);
+    if (draw) text(ctx, sub, W / 2, y + 10, `400 14px ${FF}`, C.muted, 'center');
+    y += 30;
+    if (sc) {
+      if (draw) {
+        rr(ctx, PAD, y, IW, 82, 12, C.s2);
+        const col = sc.pct >= 60 ? C.ok : C.bad;
+        text(ctx, '得分', W / 2 - 90, y + 24, `400 14px ${FF}`, C.text, 'center');
+        text(ctx, `${sc.correct}/${sc.total}${sc.unit}`, W / 2 - 90, y + 55, `800 28px ${FF}`, col, 'center');
+        text(ctx, '正确率', W / 2 + 90, y + 24, `400 14px ${FF}`, C.text, 'center');
+        text(ctx, `${sc.pct}%`, W / 2 + 90, y + 55, `800 28px ${FF}`, col, 'center');
+      }
+      y += 82 + 14;
+    }
+    S.questions.forEach((q, i) => {
+      if (draw) { ctx.fillStyle = C.border; ctx.fillRect(PAD, y, IW, 1); }
+      y += 14;
+      if (draw) text(ctx, `第 ${i + 1} 题 · ${verseLabel(q)}`, PAD, y + 9, `600 13px ${FF}`, C.muted);
+      y += 24;
+      if (S.type === 'fill') {
+        y += para(ctx, fillRuns(q, S.answers[i]), PAD, y, IW, 17, 34, draw);
+        const r = checkFill(q, S.answers[i]);
+        if (draw) text(ctx, `得分 ${r.correct}/${r.total}`, PAD, y + 11, `400 13px ${FF}`, r.correct === r.total ? C.ok : C.bad);
+        y += 28;
+      } else if (S.type === 'qa') {
+        y += para(ctx, [R(q.question, 'b')], PAD, y, IW, 17, 30, draw) + 8;
+        y += panel(ctx, '我的回答', [R(S.answers[i] || '（未作答）', S.answers[i] ? 'n' : 'mut')], y, C.s2, null, draw);
+        y += panel(ctx, '参考答案', [R(q.answer || '（暂无参考答案）', q.answer ? 'n' : 'mut')], y, C.note, C.purple, draw);
+        y += 6;
+      } else {
+        const r = checkDict(S, i);
+        if (draw) text(ctx, `${r.ok ? '✅ 默写正确' : '❌ 默写有误'} · 准确率 ${r.accuracy}%`, PAD, y + 9, `600 14px ${FF}`, r.ok ? C.ok : C.bad);
+        y += 24;
+        y += panel(ctx, '完整经文', [R(r.prefix, 'hint'), R(r.rest, 'n')], y, C.s2, null, draw);
+        y += panel(ctx, '我的默写', [R(r.prefix, 'hint'), R(r.user || '（未填写）', r.user ? 'n' : 'mut')], y, C.s2, null, draw);
+        y += 6;
+      }
+    });
+    if (draw) text(ctx, `蓬勃 · 启示录训练　${today()}`, W / 2, y + 12, `400 12px ${FF}`, C.muted, 'center');
+    return y + 36;
+  }
+  /* 第一遍只量高度，第二遍真正绘制 */
+  const probe = document.createElement('canvas').getContext('2d');
+  const H = Math.ceil(layout(probe, false));
+  const scale = Math.max(0.5, Math.min(2, 16000 / H));
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(W * scale); cv.height = Math.round(H * scale);
+  const ctx = cv.getContext('2d'); ctx.scale(scale, scale);
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+  layout(ctx, true);
+  return cv;
+}
+async function exportImage() {
+  try {
+    const S = ui.session;
+    const canvas = exportCanvas(S);
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    if (!blob) throw new Error('生成图片失败');
+    const name = `${TYPES[S.type].label}结果_${today()}.png`;
+    const file = new File([blob], name, { type: 'image/png' });
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: name }); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    download(blob, name); toast('图片已保存', 'success');
+  } catch (e) {
+    console.warn(e); toast('图片生成失败，已改用打印 / 另存为 PDF');
+    setTimeout(() => window.print(), 500);
+  }
+}
+
+/* =====================================================================
+ * 编辑器：保存表单
+ * ===================================================================== */
+function updatePreview() {
+  const t = $('#fQuestion'), p = $('#blankPreview');
+  if (t && p) p.innerHTML = previewBlanksHtml(t.value);
+}
+function saveForm() {
+  const E = ui.editor, kind = E.kind;
+  const chSel = Number($('#fChapter').value) || 0;
+  const pv = chSel === 0 ? { chapter: 0, verse: '' } : parseVerse(chSel, $('#fVerse').value.trim());   // 不限章节时忽略节号
+  const { chapter, verse } = pv;
+  const question = clean($('#fQuestion').value);
+  if (!question) { toast('题目内容不能为空', 'error'); return; }
+  let obj;
+  if (kind === 'fill') {
+    const answers = extractBlanks(question);
+    if (!answers.length) { toast('请用全角括号（…）至少标出 1 个填空', 'error'); return; }
+    obj = { chapter, verse, question, answers };
+  } else {
+    obj = { chapter, verse, question, answer: clean($('#fAnswer').value) };
+  }
+  const bank = getBank(kind, E.diff);
+  const idx = E.editingId == null ? -1 : bank.findIndex(x => x.id === E.editingId);
+  if (idx >= 0) { obj.id = bank[idx].id; bank[idx] = obj; toast('已保存修改', 'success'); }
+  else { obj.id = nextId(bank); bank.push(obj); toast('已新建 1 题', 'success'); }
+  if (chapter > 0) E.lastChapter = chapter;
+  E.formOpen = false; E.editingId = null;
+  saveBanks(); go('editor', { replace: true });
+}
+
+/* =====================================================================
+ * 事件（统一委托）
+ * ===================================================================== */
+const S_ = () => ui.session;
+const ACT = {
+  go: d => { if (d.view === 'editor') askPassword('editor', () => go('editor')); else go(d.view); },
+  openType: d => {
+    const open = () => { ui.setup.type = d.type; ui.setup.chapter = null; ui.setup.group = 'all'; go('setup'); };
+    if (d.type === 'qa') askPassword('qa', open); else open();
+  },
+  lockEditor: () => { setUnlocked('editor', false); ui.editor.formOpen = false; go('home'); toast('已锁定题库编辑'); },
+  setDiff: d => { ui.setup.diff = d.v; ui.setup.chapter = null; ui.setup.group = 'all'; render(true); },
+  setScope: d => { ui.setup.scope = d.v; render(true); },
+  start: () => startSession(),
+  toggleAnswer: () => { const S = S_(); S.shown[S.idx] = !S.shown[S.idx]; render(true); },
+  prev: () => { const S = S_(); if (S.idx > 0) { S.idx--; render(); } },
+  next: () => { const S = S_(); if (S.idx < S.questions.length - 1) { S.idx++; render(); } },
+  finish: () => { S_().finished = true; go('result'); },
+  moreHint: () => { const S = S_(); S.hints[S.idx]++; render(true); },
+  again: () => startSession(),
+  nextGroup: () => { ui.setup.group = Number(ui.session.group) + 1; startSession(); },
+  exportImage: () => exportImage(),
+  /* 编辑器 */
+  edKind: d => { Object.assign(ui.editor, { kind: d.v, page: 1, filter: '' }); render(true); },
+  edDiff: d => { Object.assign(ui.editor, { diff: d.v, page: 1 }); render(true); },
+  edPage: d => { ui.editor.page = Number(d.p); render(); },
+  edNew: () => { Object.assign(ui.editor, { editingId: null, formOpen: true }); go('form'); },
+  edEdit: d => { Object.assign(ui.editor, { editingId: Number(d.id), formOpen: true }); go('form'); },
+  edDup: d => {
+    const E = ui.editor, bank = getBank(E.kind, E.diff), src = bank.find(q => q.id === Number(d.id)); if (!src) return;
+    const copy = JSON.parse(JSON.stringify(src)); copy.id = nextId(bank); bank.push(copy);
+    saveBanks(); render(true); toast('已复制题目（新 id #' + copy.id + '）', 'success');
+  },
+  edDel: d => {
+    const E = ui.editor, bank = getBank(E.kind, E.diff), i = bank.findIndex(q => q.id === Number(d.id)); if (i < 0) return;
+    if (!confirm('确定删除这道题？\n' + truncate(bank[i].question, 40))) return;
+    bank.splice(i, 1); saveBanks(); render(true); toast('已删除');
+  },
+  edImport: () => doImport(),
+  edExport: () => exportCurrent(),
+  edExportAll: () => exportAll(),
+  edOffline: () => exportOffline(),
+  edReset: () => {
+    if (!confirm('将丢弃本机上所有修改，恢复为当前文件内置的题库。确定吗？')) return;
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    banks = normBanks(readEmbedded()); render(true); toast('已恢复为文件内置题库', 'success');
+  },
+  formCancel: () => { ui.editor.formOpen = false; ui.editor.editingId = null; go('editor', { replace: true }); },
+  formSave: () => saveForm(),
+  fMark: () => {
+    const t = $('#fQuestion'), s = t.selectionStart, e = t.selectionEnd;
+    if (s === e) { toast('请先在题目中选中要挖空的文字'); return; }
+    t.value = t.value.slice(0, s) + '（' + t.value.slice(s, e) + '）' + t.value.slice(e);
+    t.focus(); t.setSelectionRange(s, e + 2); updatePreview();
+  },
+  fUnmark: () => { const t = $('#fQuestion'); t.value = t.value.replace(/（([^）]*)）/g, '$1'); updatePreview(); }
+};
+const CHG = {
+  setChapter: v => { ui.setup.chapter = Number(v); ui.setup.group = 'all'; render(true); },
+  setGroup: v => { ui.setup.group = v; render(true); },
+  setCount: v => { ui.setup.count = Number(v); render(true); }
+};
+const INP = {
+  fill: (el) => { const S = S_(); if (!Array.isArray(S.answers[S.idx])) S.answers[S.idx] = []; S.answers[S.idx][Number(el.dataset.i)] = el.value; },
+  text: (el) => { const S = S_(); S.answers[S.idx] = el.value; },
+  fQuestion: () => updatePreview(),
+  edSearch: (el) => {
+    ui.editor.filter = el.value; ui.editor.page = 1;
+    const list = editorFiltered().slice(0, PAGE_SIZE);
+    $('#edList').innerHTML = list.length ? list.map(editorRow).join('') : '<div class="empty">无匹配结果</div>';
+  }
+};
+app.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (el && !el.disabled && ACT[el.dataset.act]) ACT[el.dataset.act](el.dataset, el);
+});
+app.addEventListener('change', e => {
+  const el = e.target.closest('[data-change]');
+  if (el && CHG[el.dataset.change]) CHG[el.dataset.change](el.value, el);
+});
+app.addEventListener('input', e => {
+  const el = e.target.closest('[data-input]');
+  if (el && INP[el.dataset.input]) INP[el.dataset.input](el);
+});
+app.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229) return;
+  const el = e.target;
+  if (el.classList && el.classList.contains('blank')) {          // 回车跳到下一个空
+    e.preventDefault();
+    const all = Array.from(app.querySelectorAll('.blank')), i = all.indexOf(el);
+    if (i >= 0 && i < all.length - 1) all[i + 1].focus(); else el.blur();
+  }
+});
+
+/* ---------- 顶栏 / 主题 ---------- */
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $('#themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+}
+$('#themeBtn').addEventListener('click', () => {
+  const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  applyTheme(t); try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
+});
+$('#homeBtn').addEventListener('click', () => go('home'));
+$('#brandBtn').addEventListener('click', () => go('home'));
+
+/* ---------- 启动 ---------- */
+(function init() {
+  let t = null; try { t = localStorage.getItem(THEME_KEY); } catch (e) {}
+  applyTheme(t || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  loadBanks();
+  try { history.replaceState({ view: 'home' }, ''); } catch (e) {}
+  render();
+})();
+</script>
+</body>
+</html>
